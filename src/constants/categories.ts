@@ -7,28 +7,25 @@ export const NAV_CATEGORIES = [
 
 export const FEATURED_COLLECTIONS = [
   {
-    title: 'Club Collection',
-    subtitle: 'Elite club jerseys from top leagues',
-    image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&q=80',
-    slug: 'clubs',
-  },
-  {
-    title: 'World Cup Collection',
-    subtitle: 'National team kits for the biggest stage',
+    title: 'Football Jerseys',
+    subtitle: 'Clubs, nationals & retro kits',
     image: 'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=800&q=80',
-    slug: 'world-cup',
+    href: '/shop',
+    cta: 'Shop All Jerseys',
   },
   {
-    title: 'Retro Collection',
-    subtitle: 'Classic jerseys from football history',
-    image: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=800&q=80',
-    slug: 'retro',
+    title: 'IPL Jerseys',
+    subtitle: 'Official-style cricket team kits',
+    image: 'https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=800&q=80',
+    href: '/category/ipl',
+    cta: 'Shop IPL',
   },
   {
-    title: 'Training Collection',
-    subtitle: 'Performance training kits',
-    image: 'https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=800&q=80',
-    slug: 'training-kits',
+    title: 'Accessories',
+    subtitle: 'Socks, shin guards & fan flags',
+    image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80',
+    href: '/category/accessories',
+    cta: 'Shop Accessories',
   },
 ] as const
 

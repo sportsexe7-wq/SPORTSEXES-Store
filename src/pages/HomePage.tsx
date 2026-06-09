@@ -5,8 +5,7 @@ import { HeroSection } from '@/components/home/HeroSection'
 import { TrustBar } from '@/components/home/TrustBar'
 import { BestSellersSection } from '@/components/home/BestSellersSection'
 import { ShopByCategorySection } from '@/components/home/ShopByCategorySection'
-import { StorySection } from '@/components/home/StorySection'
-import { ReviewsSection } from '@/components/home/ReviewsSection'
+import { FeaturedCollections } from '@/components/home/FeaturedCollections'
 import { ProductCarousel } from '@/components/product/ProductCarousel'
 import { Modal } from '@/components/ui/modal'
 import { productService } from '@/services/productService'
@@ -22,9 +21,9 @@ export function HomePage() {
   const { addItem } = useCart()
   const navigate = useNavigate()
 
-  const { data: newArrivals = [] } = useQuery({
-    queryKey: ['products', 'newArrivals'],
-    queryFn: () => productService.getNewArrivals(),
+  const { data: trending = [] } = useQuery({
+    queryKey: ['products', 'trending'],
+    queryFn: () => productService.getTrending(),
   })
 
   const handleSearch = (e: React.FormEvent) => {
@@ -69,15 +68,14 @@ export function HomePage() {
       <TrustBar />
       <BestSellersSection onQuickView={setQuickViewProduct} />
       <ShopByCategorySection />
-      <StorySection />
+      <FeaturedCollections />
       <ProductCarousel
-        products={newArrivals}
-        title="New Arrivals"
-        subtitle="Fresh drops just landed"
+        products={trending}
+        title="Trending Now"
+        subtitle="What fans are buying this week"
         onQuickView={setQuickViewProduct}
         className="bg-surface-elevated"
       />
-      <ReviewsSection />
 
       <Modal
         open={!!quickViewProduct}
