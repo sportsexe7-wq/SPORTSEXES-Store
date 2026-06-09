@@ -2,14 +2,14 @@
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --color-brand: #306D29;
-  --color-brand-dark: #0D530E;
-  --color-surface: #FBF5DD;
-  --color-surface-elevated: #E7E1B1;
-  --color-surface-muted: #EDE7C0;
-  --color-border: #C8C07A;
-  --color-text: #1e1b0f;
-  --color-text-muted: #6b6044;
+  --color-brand: #4BB8FA;
+  --color-brand-dark: #1A9EE8;
+  --color-surface: #F5F5F5;
+  --color-surface-elevated: #EBF2F3;
+  --color-surface-muted: #E0EAEB;
+  --color-border: #C4D6D8;
+  --color-text: #303841;
+  --color-text-muted: #000000;
 }
 
 @layer base {

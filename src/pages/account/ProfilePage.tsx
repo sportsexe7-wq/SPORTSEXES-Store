@@ -1,20 +1,23 @@
-import { useQuery } from '@tanstack/react-query'
-import { authService } from '@/services/authService'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '@/contexts/AuthContext'
 
 export function ProfilePage() {
+  const { user, loading, signOut } = useAuth()
   const navigate = useNavigate()
-  const isLoggedIn = localStorage.getItem('sportsexe_auth') === 'true'
 
-  const { data: user } = useQuery({
-    queryKey: ['profile'],
-    queryFn: () => authService.getProfile(),
-    enabled: isLoggedIn,
-  })
+  if (loading) {
+    return (
+      <Card>
+        <CardContent className="p-8 text-center">
+          <div className="mx-auto h-6 w-6 animate-spin rounded-full border-4 border-brand border-t-transparent" />
+        </CardContent>
+      </Card>
+    )
+  }
 
-  if (!isLoggedIn) {
+  if (!user) {
     return (
       <Card>
         <CardContent className="p-8 text-center">
@@ -32,21 +35,21 @@ export function ProfilePage() {
         <dl className="space-y-3 text-sm">
           <div className="flex justify-between border-b border-border pb-3">
             <dt className="text-text-muted">Name</dt>
-            <dd className="font-medium">{user?.name}</dd>
+            <dd className="font-medium">{user.displayName ?? '—'}</dd>
           </div>
           <div className="flex justify-between border-b border-border pb-3">
             <dt className="text-text-muted">Email</dt>
-            <dd className="font-medium">{user?.email}</dd>
+            <dd className="font-medium">{user.email}</dd>
           </div>
           <div className="flex justify-between">
-            <dt className="text-text-muted">Phone</dt>
-            <dd className="font-medium">{user?.phone ?? '—'}</dd>
+            <dt className="text-text-muted">Account ID</dt>
+            <dd className="font-mono text-xs text-text-muted">{user.uid.slice(0, 12)}…</dd>
           </div>
         </dl>
         <Button
           variant="outline"
-          onClick={() => {
-            localStorage.removeItem('sportsexe_auth')
+          onClick={async () => {
+            await signOut()
             navigate('/login')
           }}
         >

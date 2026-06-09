@@ -11,6 +11,9 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { useCart } from '@/hooks/useCart'
 import { cn } from '@/utils/cn'
+import { orderService } from '@/services/orderService'
+import { productService } from '@/services/productService'
+import { useAuth } from '@/contexts/AuthContext'
 
 const shippingSchema = z.object({
   fullName: z.string().min(2, 'Name is required'),
@@ -37,7 +40,9 @@ export function CheckoutPage() {
   const [step, setStep] = useState(0)
   const [shippingData, setShippingData] = useState<ShippingForm | null>(null)
   const [paymentData, setPaymentData] = useState<PaymentForm | null>(null)
-  const { clear } = useCart()
+  const [placing, setPlacing] = useState(false)
+  const { items, clear } = useCart()
+  const { user } = useAuth()
   const navigate = useNavigate()
 
   const shippingForm = useForm<ShippingForm>({
@@ -58,9 +63,43 @@ export function CheckoutPage() {
     setStep(2)
   }
 
-  const placeOrder = () => {
-    clear()
-    navigate('/account/orders')
+  const placeOrder = async () => {
+    if (!shippingData) return
+    setPlacing(true)
+    try {
+      const now = new Date().toISOString()
+      const orderItems = await Promise.all(
+        items.map(async (item) => {
+          const product = await productService.getById(item.productId)
+          return {
+            productId: item.productId,
+            title: product?.title ?? item.productId,
+            image: product?.images[0] ?? '',
+            size: item.size,
+            quantity: item.quantity,
+            price: product?.salePrice ?? product?.price ?? 0,
+          }
+        }),
+      )
+      const subtotal = orderItems.reduce((s, i) => s + i.price * i.quantity, 0)
+      const shipping = subtotal >= 2000 ? 0 : 99
+      await orderService.create({
+        userId: user?.uid ?? 'guest',
+        items: orderItems,
+        status: 'pending',
+        subtotal,
+        shipping,
+        discount: 0,
+        total: subtotal + shipping,
+        shippingAddress: shippingData,
+        createdAt: now,
+        updatedAt: now,
+      })
+      clear()
+      navigate('/account/orders')
+    } finally {
+      setPlacing(false)
+    }
   }
 
   return (
@@ -173,8 +212,8 @@ export function CheckoutPage() {
               </div>
               <div className="flex gap-3 pt-4">
                 <Button variant="outline" onClick={() => setStep(1)}>Back</Button>
-                <Button className="flex-1" size="lg" onClick={placeOrder}>
-                  Place Order
+                <Button className="flex-1" size="lg" onClick={placeOrder} disabled={placing}>
+                  {placing ? 'Placing order…' : 'Place Order'}
                 </Button>
               </div>
             </CardContent>

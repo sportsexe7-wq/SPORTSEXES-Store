@@ -2,8 +2,11 @@ import { useQuery } from '@tanstack/react-query'
 import { orderService } from '@/services/orderService'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { formatCurrency, formatDate } from '@/utils/format'
 import { Package } from 'lucide-react'
+import { useAuth } from '@/contexts/AuthContext'
+import { useNavigate } from 'react-router-dom'
 
 const STATUS_VARIANT: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
   pending: 'outline',
@@ -14,12 +17,27 @@ const STATUS_VARIANT: Record<string, 'default' | 'secondary' | 'destructive' | '
 }
 
 export function OrdersPage() {
+  const { user, loading } = useAuth()
+  const navigate = useNavigate()
+
   const { data: orders = [], isLoading } = useQuery({
-    queryKey: ['orders', 'user-1'],
-    queryFn: () => orderService.getByUserId('user-1'),
+    queryKey: ['orders', user?.uid],
+    queryFn: () => orderService.getByUserId(user!.uid),
+    enabled: !!user,
   })
 
-  if (isLoading) return <p className="text-text-muted">Loading orders...</p>
+  if (loading || isLoading) return <p className="text-text-muted">Loading orders…</p>
+
+  if (!user) {
+    return (
+      <Card>
+        <CardContent className="p-8 text-center">
+          <p className="text-text-muted">Please sign in to view your orders.</p>
+          <Button className="mt-4" onClick={() => navigate('/login')}>Sign In</Button>
+        </CardContent>
+      </Card>
+    )
+  }
 
   if (!orders.length) {
     return (
@@ -47,7 +65,7 @@ export function OrdersPage() {
               </Badge>
             </div>
             <div className="mt-4 space-y-3">
-              {order.items.map((item, i) => (
+              {order.items.map((item: { productId: string; image: string; title: string; size: string; quantity: number; price: number }, i: number) => (
                 <div key={i} className="flex items-center gap-3">
                   <img src={item.image} alt={item.title} className="h-14 w-12 rounded object-cover" />
                   <div className="flex-1">

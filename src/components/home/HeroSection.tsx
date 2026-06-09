@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import useEmblaCarousel from 'embla-carousel-react'
 import Autoplay from 'embla-carousel-autoplay'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronLeft, ChevronRight, Star, Play, Crown, Clock } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Star, Play, Crown, Clock, Flag, ShoppingBag } from 'lucide-react'
 import { HERO_SLIDES } from '@/constants/heroSlides'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/utils/cn'
@@ -159,6 +159,43 @@ function SlideContent({ slide }: { slide: (typeof HERO_SLIDES)[number] }) {
             Argentina, France, Brazil &amp; more — shop now before they sell out.
           </p>
           <Button asChild size="sm" className="mt-1"><Link to="/category/world-cup">Shop World Cup</Link></Button>
+        </div>
+      )}
+
+      {slide.type === 'world-cup-flags' && (
+        <div className="space-y-3">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-3 py-0.5 text-[11px] font-semibold uppercase tracking-widest text-white">
+            <Flag className="h-3 w-3" /> World Cup Flags
+          </span>
+          <h2 className="text-3xl font-black leading-tight tracking-tight text-white md:text-4xl lg:text-5xl">
+            Rep Your Nation.{' '}
+            <span className="text-brand">Fly the Flag.</span>
+          </h2>
+          <p className="text-sm text-white/75 md:text-base">
+            Official-style World Cup nation flags — perfect for match days &amp; fan zones.
+          </p>
+          <Button asChild size="sm" className="mt-1"><Link to="/shop?q=flag">Shop Flags</Link></Button>
+        </div>
+      )}
+
+      {slide.type === 'accessories' && (
+        <div className="space-y-3">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-3 py-0.5 text-[11px] font-semibold uppercase tracking-widest text-white">
+            <ShoppingBag className="h-3 w-3" /> Now Available
+          </span>
+          <h2 className="text-3xl font-black leading-tight tracking-tight text-white md:text-4xl lg:text-5xl">
+            More Than Jerseys.{' '}
+            <span className="text-brand">Complete Your Kit.</span>
+          </h2>
+          <p className="text-sm text-white/75 md:text-base">
+            Long socks, shin guards, IPL jerseys &amp; fan flags — everything a fan needs.
+          </p>
+          <div className="flex gap-2 pt-1">
+            <Button asChild size="sm"><Link to="/category/accessories">Shop Accessories</Link></Button>
+            <Button asChild size="sm" variant="outline" className="border-white/30 bg-white/10 text-white hover:bg-white/20">
+              <Link to="/category/ipl">IPL Jerseys</Link>
+            </Button>
+          </div>
         </div>
       )}
 

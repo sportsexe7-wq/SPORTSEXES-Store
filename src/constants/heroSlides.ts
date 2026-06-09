@@ -31,6 +31,16 @@ export const HERO_SLIDES = [
     type: 'retro-collection' as const,
     image: 'https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=1600&q=80',
   },
+  {
+    id: 'world-cup-flags',
+    type: 'world-cup-flags' as const,
+    image: 'https://images.unsplash.com/photo-1577223625816-7546f13df25d?w=1600&q=80',
+  },
+  {
+    id: 'accessories',
+    type: 'accessories' as const,
+    image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=1600&q=80',
+  },
 ]
 
 export type HeroSlide = (typeof HERO_SLIDES)[number]

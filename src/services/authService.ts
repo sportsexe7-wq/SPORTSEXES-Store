@@ -1,23 +1,39 @@
-import type { User } from '@/types'
-import { delay } from './api'
-import { mockUser } from '@/data/mock/user'
-
-export interface LoginCredentials {
-  email: string
-  password: string
-}
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+  updateProfile,
+  type User,
+} from 'firebase/auth'
+import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore'
+import { auth, db } from '@/lib/firebase'
 
 export const authService = {
-  async login(credentials: LoginCredentials): Promise<{ user: User; token: string }> {
-    await delay(500)
-    if (credentials.email && credentials.password.length >= 6) {
-      return { user: mockUser, token: 'mock-jwt-token' }
-    }
-    throw new Error('Invalid credentials')
+  async login(email: string, password: string): Promise<User> {
+    const cred = await signInWithEmailAndPassword(auth, email, password)
+    return cred.user
   },
 
-  async getProfile(): Promise<User> {
-    await delay()
-    return mockUser
+  async register(email: string, password: string, name: string): Promise<User> {
+    const cred = await createUserWithEmailAndPassword(auth, email, password)
+    await updateProfile(cred.user, { displayName: name })
+    await setDoc(doc(db, 'customers', cred.user.uid), {
+      name,
+      email,
+      orderCount: 0,
+      totalSpent: 0,
+      blocked: false,
+      createdAt: serverTimestamp(),
+    })
+    return cred.user
+  },
+
+  async logout(): Promise<void> {
+    await signOut(auth)
+  },
+
+  async getProfile(uid: string) {
+    const snap = await getDoc(doc(db, 'customers', uid))
+    return snap.exists() ? snap.data() : null
   },
 }

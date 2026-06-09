@@ -1,4 +1,4 @@
-export type ProductSize = 'S' | 'M' | 'L' | 'XL' | 'XXL'
+export type ProductSize = 'S' | 'M' | 'L' | 'XL'
 
 export interface Product {
   id: string

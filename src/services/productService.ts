@@ -1,6 +1,6 @@
 import type { Product } from '@/types'
-import { delay } from './api'
-import { mockProducts } from '@/data/mock/products'
+import { collection, doc, getDocs, getDoc, query, where } from 'firebase/firestore'
+import { db } from '@/lib/firebase'
 
 export interface ProductFilters {
   category?: string
@@ -17,12 +17,17 @@ function filterProducts(products: Product[], filters?: ProductFilters): Product[
   if (!filters) return products
 
   return products.filter((p) => {
-    if (filters.category && !p.category.toLowerCase().includes(filters.category.toLowerCase()) &&
-        !p.slug.includes(filters.category) && !p.tags.some(t => t.includes(filters.category!))) {
-      const slug = filters.category.replace(/-/g, ' ')
-      if (!p.category.toLowerCase().includes(slug) && p.country.toLowerCase() !== slug) return false
-    }
     if (filters.country && p.country.toLowerCase() !== filters.country.toLowerCase()) return false
+    if (filters.category) {
+      const cat = filters.category.toLowerCase()
+      const slug = cat.replace(/-/g, ' ')
+      if (
+        !p.category.toLowerCase().includes(cat) &&
+        !p.category.toLowerCase().includes(slug) &&
+        !p.slug.includes(cat) &&
+        !p.tags.some((t) => t.includes(cat))
+      ) return false
+    }
     if (filters.featured && !p.featured) return false
     if (filters.trending && !p.trending) return false
     if (filters.bestSeller && !p.bestSeller) return false
@@ -41,20 +46,28 @@ function filterProducts(products: Product[], filters?: ProductFilters): Product[
   })
 }
 
+async function fetchAllProducts(): Promise<Product[]> {
+  const snap = await getDocs(collection(db, 'products'))
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() } as Product))
+}
+
 export const productService = {
   async getAll(filters?: ProductFilters): Promise<Product[]> {
-    await delay()
-    return filterProducts(mockProducts, filters)
+    const products = await fetchAllProducts()
+    return filterProducts(products, filters)
   },
 
   async getBySlug(slug: string): Promise<Product | null> {
-    await delay()
-    return mockProducts.find((p) => p.slug === slug) ?? null
+    const q = query(collection(db, 'products'), where('slug', '==', slug))
+    const snap = await getDocs(q)
+    if (snap.empty) return null
+    const d = snap.docs[0]
+    return { id: d.id, ...d.data() } as Product
   },
 
   async getById(id: string): Promise<Product | null> {
-    await delay()
-    return mockProducts.find((p) => p.id === id) ?? null
+    const snap = await getDoc(doc(db, 'products', id))
+    return snap.exists() ? ({ id: snap.id, ...snap.data() } as Product) : null
   },
 
   async getBestSellers(): Promise<Product[]> {
@@ -66,10 +79,10 @@ export const productService = {
   },
 
   async getNewArrivals(): Promise<Product[]> {
-    await delay()
-    return [...mockProducts].sort(
-      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-    ).slice(0, 8)
+    const products = await fetchAllProducts()
+    return [...products]
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 8)
   },
 
   async getPlayerEditions(): Promise<Product[]> {

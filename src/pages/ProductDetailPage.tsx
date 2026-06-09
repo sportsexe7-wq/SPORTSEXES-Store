@@ -249,8 +249,7 @@ export function ProductDetailPage() {
                     <tr className="border-b border-border"><td className="py-2">S</td><td>88-96</td><td>70</td></tr>
                     <tr className="border-b border-border"><td className="py-2">M</td><td>96-104</td><td>72</td></tr>
                     <tr className="border-b border-border"><td className="py-2">L</td><td>104-112</td><td>74</td></tr>
-                    <tr className="border-b border-border"><td className="py-2">XL</td><td>112-120</td><td>76</td></tr>
-                    <tr><td className="py-2">XXL</td><td>120-128</td><td>78</td></tr>
+                    <tr><td className="py-2">XL</td><td>112-120</td><td>76</td></tr>
                   </tbody>
                 </table>
               </div>
