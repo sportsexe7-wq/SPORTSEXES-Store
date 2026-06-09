@@ -7,7 +7,7 @@ const PERKS = [
   { icon: Zap, title: 'Early Access', desc: 'First dibs on World Cup drops and limited editions' },
   { icon: Truck, title: 'Free Shipping', desc: 'Free delivery on every order, no minimum' },
   { icon: Tag, title: 'VIP Discounts', desc: 'Extra 15% off all jerseys, year-round' },
-  { icon: Star, title: 'Priority Support', desc: 'Dedicated WhatsApp line for VIP members' },
+  { icon: Star, title: 'Priority Support', desc: 'Dedicated support line for VIP members' },
 ]
 
 export function VipPage() {

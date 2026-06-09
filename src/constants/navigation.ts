@@ -7,9 +7,7 @@ export const MAIN_NAV = [
 
 export const SOCIAL_LINKS = [
   { platform: 'Instagram', url: 'https://instagram.com/sportsexe', label: 'IG' },
-  { platform: 'Twitter', url: 'https://twitter.com/sportsexe', label: 'X' },
   { platform: 'YouTube', url: 'https://youtube.com/sportsexe', label: 'YT' },
-  { platform: 'WhatsApp', url: 'https://wa.me/919876543210', label: 'WA' },
 ] as const
 
 export const CONTACT_INFO = {
