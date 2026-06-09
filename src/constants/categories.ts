@@ -35,6 +35,5 @@ export const FEATURED_COLLECTIONS = [
 export const TRUST_ITEMS = [
   'Imported Quality',
   'Secure Payments',
-  'Fast Shipping',
-  'Easy Returns',
+  'Premium Fabric',
 ] as const
