@@ -1,0 +1,67 @@
+import type { Order } from '@/types'
+
+export const mockOrders: Order[] = [
+  {
+    id: 'ORD-001',
+    userId: 'user-1',
+    items: [
+      {
+        productId: '1',
+        title: 'Argentina Home Jersey 2024',
+        image: 'https://images.unsplash.com/photo-1551958219-acbc608c6377?w=200&q=80',
+        size: 'L',
+        quantity: 1,
+        price: 2799,
+      },
+    ],
+    status: 'delivered',
+    subtotal: 2799,
+    shipping: 99,
+    discount: 0,
+    total: 2898,
+    shippingAddress: {
+      fullName: 'Rahul Sharma',
+      email: 'rahul@example.com',
+      phone: '+91 98765 43210',
+      address: '42 MG Road',
+      city: 'Mumbai',
+      state: 'Maharashtra',
+      pincode: '400001',
+    },
+    trackingNumber: 'TRK123456789',
+    createdAt: '2025-12-15T10:00:00Z',
+    updatedAt: '2025-12-18T14:30:00Z',
+  },
+  {
+    id: 'ORD-002',
+    userId: 'user-1',
+    items: [
+      {
+        productId: '3',
+        title: 'Real Madrid Home Jersey 2024/25',
+        image: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=200&q=80',
+        size: 'M',
+        quantity: 2,
+        price: 3999,
+      },
+    ],
+    status: 'shipped',
+    subtotal: 7998,
+    shipping: 0,
+    discount: 500,
+    total: 7498,
+    couponCode: 'SPORT10',
+    shippingAddress: {
+      fullName: 'Rahul Sharma',
+      email: 'rahul@example.com',
+      phone: '+91 98765 43210',
+      address: '42 MG Road',
+      city: 'Mumbai',
+      state: 'Maharashtra',
+      pincode: '400001',
+    },
+    trackingNumber: 'TRK987654321',
+    createdAt: '2026-01-05T08:00:00Z',
+    updatedAt: '2026-01-07T11:00:00Z',
+  },
+]
