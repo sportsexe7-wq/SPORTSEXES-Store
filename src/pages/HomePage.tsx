@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Search, AlertTriangle } from 'lucide-react'
+import { useNavigate, Link } from 'react-router-dom'
+import { Search, AlertTriangle, Crown, User } from 'lucide-react'
+import { useAuth } from '@/contexts/AuthContext'
 import { HeroSection } from '@/components/home/HeroSection'
 import { TrustBar } from '@/components/home/TrustBar'
 import { BestSellersSection } from '@/components/home/BestSellersSection'
@@ -19,6 +20,7 @@ export function HomePage() {
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const { addItem } = useCart()
+  const { user } = useAuth()
   const navigate = useNavigate()
 
   const { data: trending = [] } = useQuery({
@@ -33,6 +35,30 @@ export function HomePage() {
 
   return (
     <>
+      {/* Top header — site name + VIP + Login */}
+      <div className="border-b border-border bg-surface px-4 py-2.5">
+        <div className="container mx-auto flex items-center justify-between">
+          <Link to="/" className="text-lg font-black tracking-tighter text-text">
+            SPORT<span className="text-brand">SEXE</span>
+          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              to="/vip"
+              className="flex items-center gap-1.5 rounded-full border border-brand/40 bg-brand/10 px-3 py-1 text-xs font-semibold text-brand hover:bg-brand/20 transition-colors"
+            >
+              <Crown className="h-3 w-3" /> VIP
+            </Link>
+            <Link
+              to={user ? '/account' : '/login'}
+              className="flex items-center gap-1.5 rounded-full border border-border px-3 py-1 text-xs font-semibold text-text hover:border-brand/40 hover:text-brand transition-colors"
+            >
+              <User className="h-3 w-3" />
+              {user ? (user.displayName?.split(' ')[0] ?? 'Account') : 'Login'}
+            </Link>
+          </div>
+        </div>
+      </div>
+
       {/* Fake-payment warning — continuous marquee */}
       <div className="overflow-hidden bg-orange-500 py-1.5 text-xs font-semibold text-white">
         <div className="animate-marquee flex w-max gap-0">
