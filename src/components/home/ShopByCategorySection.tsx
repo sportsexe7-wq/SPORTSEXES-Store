@@ -13,14 +13,15 @@ export function ShopByCategorySection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-4 gap-6 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-8">
-          {FIFA_COUNTRIES.map((country, i) => (
+        <div className="scrollbar-hide flex gap-6 overflow-x-auto pb-2">
+          {FIFA_COUNTRIES.slice(0, 10).map((country, i) => (
             <motion.div
               key={country.slug}
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.03 }}
+              transition={{ delay: i * 0.05 }}
+              className="shrink-0"
             >
               <Link
                 to={`/category/${country.slug}`}
@@ -34,7 +35,7 @@ export function ShopByCategorySection() {
                     {country.rank}
                   </span>
                 </div>
-                <span className="max-w-[72px] truncate text-center text-xs font-medium text-text-muted transition-colors group-hover:text-white md:text-sm">
+                <span className="w-[72px] truncate text-center text-xs font-medium text-text-muted transition-colors group-hover:text-white md:text-sm">
                   {country.name}
                 </span>
               </Link>
