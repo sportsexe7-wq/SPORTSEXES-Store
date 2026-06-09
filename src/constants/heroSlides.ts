@@ -27,9 +27,9 @@ export const HERO_SLIDES = [
     image: 'https://images.unsplash.com/photo-1551958219-acbc608c6377?w=1600&q=80',
   },
   {
-    id: 'partial-cod',
-    type: 'partial-cod' as const,
-    image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1600&q=80',
+    id: 'retro-collection',
+    type: 'retro-collection' as const,
+    image: 'https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=1600&q=80',
   },
 ]
 

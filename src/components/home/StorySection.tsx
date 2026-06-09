@@ -54,7 +54,7 @@ export function StorySection() {
             <p className="mt-4 leading-relaxed text-text-muted">
               SPORTSEXE started with a simple idea: every fan deserves access to premium jerseys
               without the premium markup. What began as a small collection of imported football kits
-              has grown into India&apos;s go-to destination for football, cricket, kabaddi and custom sportswear.
+              has grown into India&apos;s go-to destination for clubs, national teams, retro classics and World Cup editions.
             </p>
             <p className="mt-4 leading-relaxed text-text-muted">
               We source directly from trusted manufacturers, obsess over stitch quality and fit,

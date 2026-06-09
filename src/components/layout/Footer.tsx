@@ -29,7 +29,7 @@ export function Footer() {
               SPORT<span className="text-brand">SEXE</span>
             </p>
             <p className="mt-3 text-sm leading-relaxed text-text-muted">
-              Premium imported jerseys for football, cricket, kabaddi and more. Customize your kit today.
+              Premium imported football jerseys — clubs, nationals, retro &amp; World Cup editions delivered across India.
             </p>
             <div className="mt-4 flex gap-2">
               {SOCIAL_LINKS.map((social) => (
@@ -50,20 +50,20 @@ export function Footer() {
           <div>
             <h3 className="mb-4 text-sm font-bold uppercase tracking-wider">Quick Links</h3>
             <ul className="space-y-2 text-sm text-text-muted">
-              <li><Link to="/shop" className="hover:text-white">Shop</Link></li>
-              <li><Link to="/#shop-by-category" className="hover:text-white">Shop by Country</Link></li>
-              <li><Link to="/vip" className="hover:text-white">Join VIP</Link></li>
-              <li><Link to="/about" className="hover:text-white">About Us</Link></li>
+              <li><Link to="/shop" className="hover:text-text">Shop</Link></li>
+              <li><Link to="/#shop-by-category" className="hover:text-text">Shop by Country</Link></li>
+              <li><Link to="/vip" className="hover:text-text">Join VIP</Link></li>
+              <li><Link to="/about" className="hover:text-text">About Us</Link></li>
             </ul>
           </div>
 
           <div>
             <h3 className="mb-4 text-sm font-bold uppercase tracking-wider">Support</h3>
             <ul className="space-y-2 text-sm text-text-muted">
-              <li><Link to="/contact" className="hover:text-white">Contact</Link></li>
-              <li><Link to="/shipping" className="hover:text-white">Shipping</Link></li>
-              <li><Link to="/returns" className="hover:text-white">Returns</Link></li>
-              <li><Link to="/privacy" className="hover:text-white">Privacy Policy</Link></li>
+              <li><Link to="/contact" className="hover:text-text">Contact</Link></li>
+              <li><Link to="/shipping" className="hover:text-text">Shipping</Link></li>
+              <li><Link to="/returns" className="hover:text-text">Returns</Link></li>
+              <li><Link to="/privacy" className="hover:text-text">Privacy Policy</Link></li>
             </ul>
           </div>
 
@@ -72,13 +72,13 @@ export function Footer() {
             <ul className="space-y-3 text-sm text-text-muted">
               <li className="flex items-start gap-2">
                 <Mail className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
-                <a href={`mailto:${CONTACT_INFO.email}`} className="hover:text-white">
+                <a href={`mailto:${CONTACT_INFO.email}`} className="hover:text-text">
                   {CONTACT_INFO.email}
                 </a>
               </li>
               <li className="flex items-start gap-2">
                 <Phone className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
-                <a href={`tel:${CONTACT_INFO.phone.replace(/\s/g, '')}`} className="hover:text-white">
+                <a href={`tel:${CONTACT_INFO.phone.replace(/\s/g, '')}`} className="hover:text-text">
                   {CONTACT_INFO.phone}
                 </a>
               </li>
@@ -95,8 +95,8 @@ export function Footer() {
         <div className="flex flex-col items-center justify-between gap-4 text-sm text-text-muted sm:flex-row">
           <p>© {new Date().getFullYear()} SPORTSEXE. All rights reserved.</p>
           <div className="flex gap-4">
-            <Link to="/terms" className="hover:text-white">Terms</Link>
-            <Link to="/privacy" className="hover:text-white">Privacy</Link>
+            <Link to="/terms" className="hover:text-text">Terms</Link>
+            <Link to="/privacy" className="hover:text-text">Privacy</Link>
           </div>
         </div>
       </div>

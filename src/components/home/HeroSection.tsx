@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import useEmblaCarousel from 'embla-carousel-react'
 import Autoplay from 'embla-carousel-autoplay'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronLeft, ChevronRight, Star, Play, Banknote, Shield } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Star, Play, Crown, Clock } from 'lucide-react'
 import { HERO_SLIDES } from '@/constants/heroSlides'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/utils/cn'
@@ -26,47 +26,30 @@ export function HeroSection() {
     if (!emblaApi) return
     onSelect()
     emblaApi.on('select', onSelect)
-    return () => {
-      emblaApi.off('select', onSelect)
-    }
+    return () => { emblaApi.off('select', onSelect) }
   }, [emblaApi, onSelect])
 
-  const activeSlide = HERO_SLIDES[selectedIndex]
-
   return (
-    <section className="relative overflow-hidden bg-surface">
+    <section className="relative overflow-hidden">
       <div ref={emblaRef}>
         <div className="flex">
           {HERO_SLIDES.map((slide) => (
             <div key={slide.id} className="relative min-w-0 flex-[0_0_100%]">
-              <div className="relative min-h-[35vh] md:min-h-[42vh]">
-                {/* Background media */}
+              <div className="relative min-h-[38vh] md:min-h-[44vh]">
                 {slide.type === 'product-video' ? (
-                  <video
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    poster={slide.poster}
-                    className="absolute inset-0 h-full w-full object-cover"
-                  >
+                  <video autoPlay muted loop playsInline poster={slide.poster}
+                    className="absolute inset-0 h-full w-full object-cover">
                     <source src={slide.video} type="video/mp4" />
                   </video>
                 ) : (
-                  <img
-                    src={slide.image}
-                    alt=""
-                    className="absolute inset-0 h-full w-full object-cover"
-                  />
+                  <img src={slide.image} alt="" className="absolute inset-0 h-full w-full object-cover object-top" />
                 )}
+                <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/45 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
 
-                <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/55 to-black/25" />
-                <div className="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-black/20" />
-
-                {/* Slide content */}
-                <div className="container relative mx-auto flex min-h-[35vh] items-center px-4 md:min-h-[42vh]">
+                <div className="container relative mx-auto flex min-h-[38vh] items-center px-4 md:min-h-[44vh]">
                   <AnimatePresence mode="wait">
-                    <SlideContent slide={slide} />
+                    <SlideContent key={slide.id} slide={slide} />
                   </AnimatePresence>
                 </div>
               </div>
@@ -75,193 +58,124 @@ export function HeroSection() {
         </div>
       </div>
 
-      {/* Arrows */}
-      <button
-        type="button"
-        onClick={scrollPrev}
-        className="absolute left-3 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/40 backdrop-blur-sm transition-colors hover:bg-black/60 md:left-6"
-        aria-label="Previous slide"
-      >
-        <ChevronLeft className="h-5 w-5" />
+      <button type="button" onClick={scrollPrev} aria-label="Previous"
+        className="absolute left-3 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/35 backdrop-blur-sm transition-colors hover:bg-black/55 md:left-5">
+        <ChevronLeft className="h-4 w-4 text-white" />
       </button>
-      <button
-        type="button"
-        onClick={scrollNext}
-        className="absolute right-3 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/40 backdrop-blur-sm transition-colors hover:bg-black/60 md:right-6"
-        aria-label="Next slide"
-      >
-        <ChevronRight className="h-5 w-5" />
+      <button type="button" onClick={scrollNext} aria-label="Next"
+        className="absolute right-3 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/35 backdrop-blur-sm transition-colors hover:bg-black/55 md:right-5">
+        <ChevronRight className="h-4 w-4 text-white" />
       </button>
 
-      {/* Dots + label */}
-      <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-3">
-        <p className="text-xs font-medium uppercase tracking-widest text-white/50">
-          {slideLabel(activeSlide.type)}
-        </p>
-        <div className="flex gap-2">
-          {HERO_SLIDES.map((slide, i) => (
-            <button
-              key={slide.id}
-              type="button"
-              onClick={() => emblaApi?.scrollTo(i)}
-              className={cn(
-                'h-1.5 rounded-full transition-all',
-                i === selectedIndex ? 'w-8 bg-brand' : 'w-4 bg-white/40 hover:bg-white/60',
-              )}
-              aria-label={`Go to ${slideLabel(slide.type)}`}
-            />
-          ))}
-        </div>
+      <div className="absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 gap-1.5">
+        {HERO_SLIDES.map((slide, i) => (
+          <button key={slide.id} type="button" onClick={() => emblaApi?.scrollTo(i)}
+            aria-label={`Slide ${i + 1}`}
+            className={cn(
+              'h-1 rounded-full transition-all duration-300',
+              i === selectedIndex ? 'w-6 bg-brand' : 'w-3 bg-white/40 hover:bg-white/60',
+            )}
+          />
+        ))}
       </div>
     </section>
   )
 }
 
-function slideLabel(type: (typeof HERO_SLIDES)[number]['type']): string {
-  const labels = {
-    'wear-the-game': 'Wear the Game',
-    review: 'Customer Review',
-    'product-video': 'Our Products',
-    'world-cup': 'World Cup Edition',
-    'partial-cod': 'Partial CoD',
-  }
-  return labels[type]
-}
-
 function SlideContent({ slide }: { slide: (typeof HERO_SLIDES)[number] }) {
   return (
     <motion.div
-      key={slide.id}
-      initial={{ opacity: 0, y: 24 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -12 }}
-      transition={{ duration: 0.45 }}
-      className="max-w-2xl"
+      initial={{ opacity: 0, x: -16 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 8 }}
+      transition={{ duration: 0.4 }}
+      className="max-w-xl"
     >
       {slide.type === 'wear-the-game' && (
-        <>
-          <span className="inline-block rounded-full border border-brand/30 bg-brand/10 px-4 py-1 text-xs font-semibold uppercase tracking-widest text-brand">
+        <div className="space-y-3">
+          <span className="inline-block rounded-full border border-white/25 bg-white/10 px-3 py-0.5 text-[11px] font-semibold uppercase tracking-widest text-white">
             Premium Football Jerseys
           </span>
-          <h1 className="mt-4 text-4xl font-black leading-tight tracking-tight md:text-6xl lg:text-7xl">
-            Wear the Game.
-            <br />
+          <h1 className="text-3xl font-black leading-tight tracking-tight text-white md:text-4xl lg:text-5xl">
+            Wear the Game.{' '}
             <span className="text-brand">Own the Moment.</span>
           </h1>
-          <p className="mt-4 max-w-lg text-base text-white/75 md:text-lg">
-            Imported-quality football jerseys. National teams, clubs, retro classics
-            and World Cup editions — delivered across India.
+          <p className="text-sm text-white/75 md:text-base">
+            Clubs, nationals &amp; retro — delivered across India.
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Button asChild size="lg">
-              <Link to="/shop">Shop Now</Link>
-            </Button>
-            <Button asChild size="lg" variant="outline">
-              <Link to="/#shop-by-category">Shop by Country</Link>
+          <div className="flex gap-2 pt-1">
+            <Button asChild size="sm"><Link to="/shop">Shop Now</Link></Button>
+            <Button asChild size="sm" variant="outline" className="border-white/30 bg-white/10 text-white hover:bg-white/20">
+              <Link to="/#shop-by-category">By Country</Link>
             </Button>
           </div>
-        </>
+        </div>
       )}
 
       {slide.type === 'review' && slide.review && (
-        <>
-          <span className="inline-block rounded-full border border-brand/30 bg-brand/10 px-4 py-1 text-xs font-semibold uppercase tracking-widest text-brand">
-            Customer Review
-          </span>
-          <div className="mt-4 flex gap-1">
+        <div className="space-y-3">
+          <div className="flex gap-0.5">
             {Array.from({ length: 5 }).map((_, i) => (
-              <Star
-                key={i}
-                className={cn(
-                  'h-5 w-5',
-                  i < slide.review.rating ? 'fill-brand text-brand' : 'text-white/20',
-                )}
-              />
+              <Star key={i} className={cn('h-4 w-4', i < slide.review.rating ? 'fill-brand text-brand' : 'text-white/30')} />
             ))}
           </div>
-          <blockquote className="mt-6 text-2xl font-semibold leading-snug md:text-3xl lg:text-4xl">
+          <blockquote className="text-lg font-semibold leading-snug text-white md:text-xl lg:text-2xl">
             &ldquo;{slide.review.text}&rdquo;
           </blockquote>
-          <p className="mt-6 text-white/70">
+          <p className="text-sm text-white/60">
             <span className="font-semibold text-white">{slide.review.name}</span>
-            {' · '}{slide.review.location} · {slide.review.product}
+            {' · '}{slide.review.location}{' · '}{slide.review.product}
           </p>
-          <Button asChild size="lg" className="mt-8">
-            <Link to="/shop">Shop Best Sellers</Link>
-          </Button>
-        </>
+          <Button asChild size="sm" className="mt-1"><Link to="/shop">Shop Best Sellers</Link></Button>
+        </div>
       )}
 
       {slide.type === 'product-video' && (
-        <>
-          <span className="inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand/10 px-4 py-1 text-xs font-semibold uppercase tracking-widest text-brand">
-            <Play className="h-3.5 w-3.5" />
-            See Our Quality
+        <div className="space-y-3">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-3 py-0.5 text-[11px] font-semibold uppercase tracking-widest text-white">
+            <Play className="h-3 w-3" /> See Our Quality
           </span>
-          <h2 className="mt-4 text-4xl font-black leading-tight tracking-tight md:text-5xl lg:text-6xl">
-            Feel the Fabric.
-            <br />
+          <h2 className="text-3xl font-black leading-tight tracking-tight text-white md:text-4xl lg:text-5xl">
+            Feel the Fabric.{' '}
             <span className="text-brand">Live the Match.</span>
           </h2>
-          <p className="mt-4 max-w-lg text-base text-white/75 md:text-lg">
-            Premium stitching, breathable fabric and authentic prints — every jersey
-            is inspected before it ships to you.
+          <p className="text-sm text-white/75 md:text-base">
+            Premium stitching &amp; authentic prints — inspected before every shipment.
           </p>
-          <Button asChild size="lg" className="mt-8">
-            <Link to="/shop">Explore Jerseys</Link>
-          </Button>
-        </>
+          <Button asChild size="sm" className="mt-1"><Link to="/shop">Explore Jerseys</Link></Button>
+        </div>
       )}
 
       {slide.type === 'world-cup' && (
-        <>
-          <span className="inline-block rounded-full border border-brand/30 bg-brand/10 px-4 py-1 text-xs font-semibold uppercase tracking-widest text-brand">
-            World Cup 2026 Edition
+        <div className="space-y-3">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-3 py-0.5 text-[11px] font-semibold uppercase tracking-widest text-white">
+            <Crown className="h-3 w-3" /> World Cup 2026
           </span>
-          <h2 className="mt-4 text-4xl font-black leading-tight tracking-tight md:text-5xl lg:text-6xl">
-            The Biggest Stage.
-            <br />
+          <h2 className="text-3xl font-black leading-tight tracking-tight text-white md:text-4xl lg:text-5xl">
+            The Biggest Stage.{' '}
             <span className="text-brand">The Best Kits.</span>
           </h2>
-          <p className="mt-4 max-w-lg text-base text-white/75 md:text-lg">
-            Argentina, France, Brazil, Spain and more — national team jerseys built
-            for the world&apos;s greatest tournament.
+          <p className="text-sm text-white/75 md:text-base">
+            Argentina, France, Brazil &amp; more — shop now before they sell out.
           </p>
-          <Button asChild size="lg" className="mt-8">
-            <Link to="/category/world-cup">Shop World Cup</Link>
-          </Button>
-        </>
+          <Button asChild size="sm" className="mt-1"><Link to="/category/world-cup">Shop World Cup</Link></Button>
+        </div>
       )}
 
-      {slide.type === 'partial-cod' && (
-        <>
-          <span className="inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand/10 px-4 py-1 text-xs font-semibold uppercase tracking-widest text-brand">
-            <Banknote className="h-3.5 w-3.5" />
-            Partial Cash on Delivery
+      {slide.type === 'retro-collection' && (
+        <div className="space-y-3">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-3 py-0.5 text-[11px] font-semibold uppercase tracking-widest text-white">
+            <Clock className="h-3 w-3" /> Retro Collection
           </span>
-          <h2 className="mt-4 text-4xl font-black leading-tight tracking-tight md:text-5xl lg:text-6xl">
-            Pay 30% Now.
-            <br />
-            <span className="text-brand">Rest on Delivery.</span>
+          <h2 className="text-3xl font-black leading-tight tracking-tight text-white md:text-4xl lg:text-5xl">
+            Relive the Classics.{' '}
+            <span className="text-brand">Own the History.</span>
           </h2>
-          <p className="mt-4 max-w-lg text-base text-white/75 md:text-lg">
-            Order with confidence — pay a small advance online and settle the balance
-            when your jersey arrives at your door.
+          <p className="text-sm text-white/75 md:text-base">
+            Iconic kits from the 80s, 90s &amp; 2000s — limited stock, authentic feel.
           </p>
-          <div className="mt-6 flex flex-wrap gap-4 text-sm text-white/70">
-            <span className="flex items-center gap-2">
-              <Shield className="h-4 w-4 text-brand" />
-              Secure checkout
-            </span>
-            <span className="flex items-center gap-2">
-              <Banknote className="h-4 w-4 text-brand" />
-              Available on orders ₹1,999+
-            </span>
-          </div>
-          <Button asChild size="lg" className="mt-8">
-            <Link to="/shop">Order with Partial CoD</Link>
-          </Button>
-        </>
+          <Button asChild size="sm" className="mt-1"><Link to="/category/retro">Shop Retro</Link></Button>
+        </div>
       )}
     </motion.div>
   )
