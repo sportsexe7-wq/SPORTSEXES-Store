@@ -39,7 +39,7 @@ export function HeroSection() {
         <div className="flex">
           {HERO_SLIDES.map((slide) => (
             <div key={slide.id} className="relative min-w-0 flex-[0_0_100%]">
-              <div className="relative min-h-[70vh] md:min-h-[85vh]">
+              <div className="relative min-h-[35vh] md:min-h-[42vh]">
                 {/* Background media */}
                 {slide.type === 'product-video' ? (
                   <video
@@ -64,7 +64,7 @@ export function HeroSection() {
                 <div className="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-black/20" />
 
                 {/* Slide content */}
-                <div className="container relative mx-auto flex min-h-[70vh] items-center px-4 md:min-h-[85vh]">
+                <div className="container relative mx-auto flex min-h-[35vh] items-center px-4 md:min-h-[42vh]">
                   <AnimatePresence mode="wait">
                     <SlideContent slide={slide} />
                   </AnimatePresence>
