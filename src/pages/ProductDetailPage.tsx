@@ -63,27 +63,62 @@ export function ProductDetailPage() {
     <div className="container mx-auto px-4 py-8 md:py-12">
       <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
         {/* Gallery */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           <div className="relative aspect-square overflow-hidden rounded-2xl bg-surface-muted">
             <img
+              key={activeImage}
               src={product.images[activeImage]}
               alt={product.title}
-              className="h-full w-full object-cover transition-transform hover:scale-110 duration-500"
+              className="h-full w-full object-cover transition-opacity duration-300"
             />
             {discount > 0 && (
               <Badge className="absolute left-4 top-4">-{discount}% OFF</Badge>
             )}
+            {/* Prev / Next arrows */}
+            {product.images.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setActiveImage((activeImage - 1 + product.images.length) % product.images.length)}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm hover:bg-black/60 transition-colors"
+                >
+                  ‹
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveImage((activeImage + 1) % product.images.length)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm hover:bg-black/60 transition-colors"
+                >
+                  ›
+                </button>
+                {/* Dot indicators */}
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                  {product.images.map((_, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => setActiveImage(i)}
+                      className={cn(
+                        'h-1.5 rounded-full transition-all',
+                        i === activeImage ? 'w-5 bg-brand' : 'w-1.5 bg-white/60',
+                      )}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
           </div>
+          {/* Thumbnails */}
           {product.images.length > 1 && (
-            <div className="flex gap-3 overflow-x-auto scrollbar-hide">
+            <div className="flex gap-2 overflow-x-auto scrollbar-hide">
               {product.images.map((img, i) => (
                 <button
                   key={i}
                   type="button"
                   onClick={() => setActiveImage(i)}
                   className={cn(
-                    'h-20 w-20 shrink-0 overflow-hidden rounded-lg border-2',
-                    activeImage === i ? 'border-brand' : 'border-transparent',
+                    'h-16 w-16 shrink-0 overflow-hidden rounded-lg border-2 transition-colors',
+                    activeImage === i ? 'border-brand' : 'border-transparent opacity-60 hover:opacity-100',
                   )}
                 >
                   <img src={img} alt="" className="h-full w-full object-cover" />
