@@ -1,20 +1,24 @@
 import { useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
-import { Star, Minus, Plus, Heart, Truck, Shield, RotateCcw } from 'lucide-react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { Star, Minus, Plus, Heart, Truck, Shield, RotateCcw, MessageSquare } from 'lucide-react'
 import { productService } from '@/services/productService'
+import { reviewService } from '@/services/reviewService'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { formatCurrency, calculateDiscount } from '@/utils/format'
 import { useCart } from '@/hooks/useCart'
 import { useWishlist } from '@/hooks/useWishlist'
+import { ReviewCard } from '@/components/review/ReviewCard'
+import { ReviewForm } from '@/components/review/ReviewForm'
 import type { ProductSize } from '@/types'
 import { cn } from '@/utils/cn'
 
 export function ProductDetailPage() {
   const { slug } = useParams<{ slug: string }>()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const [selectedSize, setSelectedSize] = useState<ProductSize>('M')
   const [quantity, setQuantity] = useState(1)
   const [activeImage, setActiveImage] = useState(0)
@@ -25,6 +29,12 @@ export function ProductDetailPage() {
     queryKey: ['product', slug],
     queryFn: () => productService.getBySlug(slug!),
     enabled: !!slug,
+  })
+
+  const { data: reviews = [] } = useQuery({
+    queryKey: ['reviews', 'product', product?.id],
+    queryFn: () => reviewService.getByProduct(product!.id),
+    enabled: !!product?.id,
   })
 
   if (isLoading) {
@@ -319,6 +329,72 @@ export function ProductDetailPage() {
           </Tabs>
         </div>
       </div>
+
+      {/* Reviews */}
+      <section className="mt-16 border-t border-border pt-12">
+        <div className="mb-8 flex items-end justify-between gap-4">
+          <div>
+            <span className="inline-flex items-center gap-1 rounded-full border border-brand/30 bg-brand/10 px-3 py-0.5 text-[11px] font-bold uppercase tracking-widest text-brand">
+              <MessageSquare className="h-3 w-3" /> Reviews
+            </span>
+            <h2 className="mt-3 text-2xl font-black tracking-tight md:text-3xl">
+              Customer Reviews
+            </h2>
+            {reviews.length > 0 && (
+              <div className="mt-2 flex items-center gap-2 text-sm text-text-muted">
+                <div className="flex gap-0.5">
+                  {Array.from({ length: 5 }).map((_, i) => {
+                    const avg = reviews.reduce((s, r) => s + r.rating, 0) / reviews.length
+                    return (
+                      <Star
+                        key={i}
+                        className={cn(
+                          'h-4 w-4',
+                          i < Math.round(avg) ? 'fill-brand text-brand' : 'text-border',
+                        )}
+                      />
+                    )
+                  })}
+                </div>
+                <span>
+                  {(reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1)} avg
+                  · {reviews.length} review{reviews.length !== 1 ? 's' : ''}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="grid gap-8 lg:grid-cols-3">
+          {/* Reviews list */}
+          <div className="lg:col-span-2">
+            {reviews.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-border bg-surface-elevated p-8 text-center">
+                <MessageSquare className="mx-auto h-8 w-8 text-text-muted" />
+                <p className="mt-3 text-sm font-semibold">No reviews yet</p>
+                <p className="mt-1 text-xs text-text-muted">Be the first to review this jersey!</p>
+              </div>
+            ) : (
+              <div className="grid gap-4 sm:grid-cols-2">
+                {reviews.map((review) => (
+                  <ReviewCard key={review.id} review={review} />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Write a review */}
+          <div className="lg:col-span-1">
+            <ReviewForm
+              product={product}
+              onSubmitted={() => {
+                queryClient.invalidateQueries({ queryKey: ['reviews', 'product', product.id] })
+                queryClient.invalidateQueries({ queryKey: ['reviews', 'recent'] })
+              }}
+            />
+          </div>
+        </div>
+      </section>
     </div>
   )
 }

@@ -1,51 +1,72 @@
-import { Star, Quote } from 'lucide-react'
-import { motion } from 'framer-motion'
-import { REVIEWS } from '@/constants/reviews'
-import { cn } from '@/utils/cn'
+import { useQuery } from '@tanstack/react-query'
+import { Link } from 'react-router-dom'
+import { Star, MessageSquare } from 'lucide-react'
+import { reviewService } from '@/services/reviewService'
+import { ReviewCard } from '@/components/review/ReviewCard'
 
 export function ReviewsSection() {
+  const { data: reviews = [], isLoading } = useQuery({
+    queryKey: ['reviews', 'recent'],
+    queryFn: () => reviewService.getRecent(8),
+  })
+
+  if (!isLoading && reviews.length === 0) return null
+
+  const avg =
+    reviews.length > 0
+      ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length
+      : 0
+
   return (
-    <section className="border-t border-border bg-surface-elevated py-16 md:py-24">
-      <div className="container mx-auto px-4">
-        <div className="mb-10 text-center">
-          <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
-            What Our Customers Say
-          </h2>
-          <p className="mt-2 text-text-muted">Real reviews from real fans across India</p>
+    <section className="relative overflow-hidden border-t border-border bg-gradient-to-b from-surface-elevated to-surface py-16 md:py-20">
+      <div className="pointer-events-none absolute -top-32 right-0 h-80 w-[600px] rounded-full bg-brand/5 blur-3xl" />
+
+      <div className="container relative mx-auto px-4">
+        <div className="mb-10 flex items-end justify-between gap-4">
+          <div>
+            <span className="inline-block rounded-full border border-brand/30 bg-brand/10 px-3 py-0.5 text-[11px] font-bold uppercase tracking-widest text-brand">
+              <MessageSquare className="mr-1 inline h-3 w-3" /> Real Reviews
+            </span>
+            <h2 className="mt-3 text-3xl font-black tracking-tight md:text-4xl">
+              What Fans Are <span className="text-brand">Saying</span>
+            </h2>
+            {avg > 0 && (
+              <div className="mt-2 flex items-center gap-2 text-sm text-text-muted">
+                <div className="flex gap-0.5">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star
+                      key={i}
+                      className={`h-4 w-4 ${i < Math.round(avg) ? 'fill-brand text-brand' : 'text-border'}`}
+                    />
+                  ))}
+                </div>
+                <span>
+                  {avg.toFixed(1)} avg · {reviews.length} review{reviews.length !== 1 ? 's' : ''}
+                </span>
+              </div>
+            )}
+          </div>
+          <Link
+            to="/shop"
+            className="hidden shrink-0 text-sm font-semibold text-brand hover:underline md:block"
+          >
+            Browse jerseys →
+          </Link>
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {REVIEWS.map((review, i) => (
-            <motion.div
-              key={review.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="relative rounded-2xl border border-border bg-surface p-6"
-            >
-              <Quote className="absolute right-4 top-4 h-8 w-8 text-brand/20" />
-              <div className="flex gap-0.5">
-                {Array.from({ length: 5 }).map((_, j) => (
-                  <Star
-                    key={j}
-                    className={cn(
-                      'h-4 w-4',
-                      j < review.rating ? 'fill-brand text-brand' : 'text-border',
-                    )}
-                  />
-                ))}
-              </div>
-              <p className="mt-4 text-sm leading-relaxed text-text-muted">
-                &ldquo;{review.text}&rdquo;
-              </p>
-              <div className="mt-6 border-t border-border pt-4">
-                <p className="font-semibold">{review.name}</p>
-                <p className="text-xs text-text-muted">{review.location} · {review.product}</p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="h-52 animate-pulse rounded-2xl bg-surface" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {reviews.slice(0, 8).map((review) => (
+              <ReviewCard key={review.id} review={review} showProduct />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   )

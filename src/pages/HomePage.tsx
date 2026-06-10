@@ -7,6 +7,7 @@ import { TrustBar } from '@/components/home/TrustBar'
 import { BestSellersSection } from '@/components/home/BestSellersSection'
 import { ShopByCategorySection } from '@/components/home/ShopByCategorySection'
 import { FeaturedCollections } from '@/components/home/FeaturedCollections'
+import { ReviewsSection } from '@/components/home/ReviewsSection'
 import { ProductCarousel } from '@/components/product/ProductCarousel'
 import { Modal } from '@/components/ui/modal'
 import { productService } from '@/services/productService'
@@ -111,7 +112,10 @@ export function HomePage() {
         onQuickView={setQuickViewProduct}
       />
 
-      {/* 4. Shop by Category (6 accessory cards) */}
+      {/* 4. Reviews */}
+      <ReviewsSection />
+
+      {/* 5. Shop by Category (6 accessory cards) */}
       <FeaturedCollections />
 
       <Modal
