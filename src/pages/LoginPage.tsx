@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { MailCheck } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -18,6 +19,7 @@ const signInSchema = z.object({
 const signUpSchema = z.object({
   name: z.string().min(2, 'Name required'),
   email: z.string().email('Valid email required'),
+  phone: z.string().min(10, 'Valid 10-digit phone required').max(10, 'Valid 10-digit phone required'),
   password: z.string().min(6, 'Min 6 characters'),
 })
 
@@ -27,11 +29,13 @@ type SignUpForm = z.infer<typeof signUpSchema>
 export function LoginPage() {
   const [tab, setTab] = useState<'signin' | 'signup'>('signin')
   const [error, setError] = useState('')
-  const { user, signIn, signUp } = useAuth()
+  const [verificationSent, setVerificationSent] = useState(false)
+  const [resending, setResending] = useState(false)
+  const { user, signIn, signUp, resendVerification } = useAuth()
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (user) navigate('/account', { replace: true })
+    if (user?.emailVerified) navigate('/account', { replace: true })
   }, [user, navigate])
 
   const signInForm = useForm<SignInForm>({ resolver: zodResolver(signInSchema) })
@@ -50,12 +54,44 @@ export function LoginPage() {
   const onSignUp = async (data: SignUpForm) => {
     try {
       setError('')
-      await signUp(data.email, data.password, data.name)
-      navigate('/account')
+      await signUp(data.email, data.password, data.name, `+91${data.phone}`)
+      setVerificationSent(true)
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : ''
       setError(msg.includes('email-already-in-use') ? 'Email already in use' : 'Could not create account')
     }
+  }
+
+  const handleResend = async () => {
+    setResending(true)
+    try { await resendVerification() } finally { setResending(false) }
+  }
+
+  // After signup — waiting for email verification
+  if (verificationSent) {
+    return (
+      <div className="container mx-auto flex min-h-[65vh] items-center justify-center px-4 py-12">
+        <Card className="w-full max-w-md">
+          <CardContent className="p-8 text-center">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-brand/10">
+              <MailCheck className="h-8 w-8 text-brand" />
+            </div>
+            <h2 className="mt-4 text-xl font-bold">Verify your email</h2>
+            <p className="mt-2 text-sm text-text-muted">
+              We sent a verification link to your email. Click it to activate your account, then sign in.
+            </p>
+            <div className="mt-6 flex flex-col gap-3">
+              <Button onClick={() => { setVerificationSent(false); setTab('signin') }}>
+                Go to Sign In
+              </Button>
+              <Button variant="ghost" size="sm" onClick={handleResend} disabled={resending}>
+                {resending ? 'Sending…' : 'Resend verification email'}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
   return (
@@ -69,7 +105,6 @@ export function LoginPage() {
             {tab === 'signin' ? 'Sign in to your SPORTSEXE account' : 'Join SPORTSEXE today'}
           </p>
 
-          {/* Tab toggle */}
           <div className="mt-6 flex rounded-xl border border-border bg-surface-elevated p-1">
             {(['signin', 'signup'] as const).map((t) => (
               <button
@@ -121,6 +156,24 @@ export function LoginPage() {
                 <Input id="su-email" type="email" className="mt-1" autoComplete="email" {...signUpForm.register('email')} />
                 {signUpForm.formState.errors.email && (
                   <p className="mt-1 text-xs text-red-500">{signUpForm.formState.errors.email.message}</p>
+                )}
+              </div>
+              <div>
+                <Label htmlFor="su-phone">Phone Number</Label>
+                <div className="mt-1 flex">
+                  <span className="flex items-center rounded-l-md border border-r-0 border-border bg-surface-muted px-3 text-sm text-text-muted">+91</span>
+                  <Input
+                    id="su-phone"
+                    type="tel"
+                    className="rounded-l-none"
+                    placeholder="9876543210"
+                    maxLength={10}
+                    autoComplete="tel"
+                    {...signUpForm.register('phone')}
+                  />
+                </div>
+                {signUpForm.formState.errors.phone && (
+                  <p className="mt-1 text-xs text-red-500">{signUpForm.formState.errors.phone.message}</p>
                 )}
               </div>
               <div>

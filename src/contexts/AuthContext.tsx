@@ -4,6 +4,7 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut as firebaseSignOut,
+  sendEmailVerification,
   updateProfile,
   type User,
 } from 'firebase/auth'
@@ -14,8 +15,9 @@ interface AuthContextValue {
   user: User | null
   loading: boolean
   signIn: (email: string, password: string) => Promise<void>
-  signUp: (email: string, password: string, name: string) => Promise<void>
+  signUp: (email: string, password: string, name: string, phone: string) => Promise<void>
   signOut: () => Promise<void>
+  resendVerification: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -36,12 +38,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await signInWithEmailAndPassword(auth, email, password)
   }
 
-  const signUp = async (email: string, password: string, name: string) => {
+  const signUp = async (email: string, password: string, name: string, phone: string) => {
     const cred = await createUserWithEmailAndPassword(auth, email, password)
     await updateProfile(cred.user, { displayName: name })
+    await sendEmailVerification(cred.user)
     await setDoc(doc(db, 'customers', cred.user.uid), {
       name,
       email,
+      phone,
       orderCount: 0,
       totalSpent: 0,
       blocked: false,
@@ -53,8 +57,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await firebaseSignOut(auth)
   }
 
+  const resendVerification = async () => {
+    if (auth.currentUser) await sendEmailVerification(auth.currentUser)
+  }
+
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut }}>
+    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut, resendVerification }}>
       {children}
     </AuthContext.Provider>
   )
