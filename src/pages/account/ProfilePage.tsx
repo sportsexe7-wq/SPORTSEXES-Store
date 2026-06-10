@@ -1,11 +1,23 @@
+import { useEffect, useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
+import { doc, getDoc } from 'firebase/firestore'
+import { db } from '@/lib/firebase'
 
 export function ProfilePage() {
   const { user, loading, signOut } = useAuth()
   const navigate = useNavigate()
+  const [phone, setPhone] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (user) {
+      getDoc(doc(db, 'customers', user.uid)).then((snap) => {
+        if (snap.exists()) setPhone(snap.data().phone ?? null)
+      })
+    }
+  }, [user])
 
   if (loading) {
     return (
@@ -39,11 +51,23 @@ export function ProfilePage() {
           </div>
           <div className="flex justify-between border-b border-border pb-3">
             <dt className="text-text-muted">Email</dt>
-            <dd className="font-medium">{user.email}</dd>
+            <dd className="flex items-center gap-2 font-medium">
+              {user.email}
+              {user.emailVerified
+                ? <span className="rounded-full bg-green-500/15 px-2 py-0.5 text-[10px] font-bold text-green-400">Verified</span>
+                : <span className="rounded-full bg-orange-500/15 px-2 py-0.5 text-[10px] font-bold text-orange-400">Unverified</span>
+              }
+            </dd>
           </div>
+          {phone && (
+            <div className="flex justify-between border-b border-border pb-3">
+              <dt className="text-text-muted">Phone</dt>
+              <dd className="font-medium">{phone}</dd>
+            </div>
+          )}
           <div className="flex justify-between">
-            <dt className="text-text-muted">Account ID</dt>
-            <dd className="font-mono text-xs text-text-muted">{user.uid.slice(0, 12)}…</dd>
+            <dt className="text-text-muted">Member since</dt>
+            <dd className="text-text-muted">{user.metadata.creationTime ? new Date(user.metadata.creationTime).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}</dd>
           </div>
         </dl>
         <Button

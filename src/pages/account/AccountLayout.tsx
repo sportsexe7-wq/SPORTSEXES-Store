@@ -19,7 +19,7 @@ export function AccountLayout() {
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-orange-500/30 bg-orange-500/10 px-4 py-3 text-sm">
           <div className="flex items-center gap-2 text-orange-400">
             <MailWarning className="h-4 w-4 shrink-0" />
-            Your email is not verified. Check your inbox or resend the link.
+            Your email is not verified. Check your inbox (or Spam folder) for the verification link.
           </div>
           <button
             type="button"

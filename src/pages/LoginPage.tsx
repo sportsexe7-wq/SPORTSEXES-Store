@@ -80,6 +80,9 @@ export function LoginPage() {
             <p className="mt-2 text-sm text-text-muted">
               We sent a verification link to your email. Click it to activate your account, then sign in.
             </p>
+            <p className="mt-3 rounded-lg bg-surface-muted px-3 py-2 text-xs text-text-muted">
+              📬 Can't find it? Check your <span className="font-semibold text-text">Spam / Junk</span> folder — verification emails sometimes land there.
+            </p>
             <div className="mt-6 flex flex-col gap-3">
               <Button onClick={() => { setVerificationSent(false); setTab('signin') }}>
                 Go to Sign In

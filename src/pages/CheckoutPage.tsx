@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -13,6 +13,8 @@ import { useCart } from '@/hooks/useCart'
 import { cn } from '@/utils/cn'
 import { orderService } from '@/services/orderService'
 import { productService } from '@/services/productService'
+import { formatCurrency } from '@/utils/format'
+import type { Product } from '@/types'
 import { useAuth } from '@/contexts/AuthContext'
 import {
   createRazorpayOrder,
@@ -41,9 +43,18 @@ export function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState<'online' | 'cod'>('online')
   const [placing, setPlacing] = useState(false)
   const [error, setError] = useState('')
+  const [cartProducts, setCartProducts] = useState<Record<string, Product>>({})
   const { items, clear } = useCart()
   const { user } = useAuth()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    Promise.all(items.map((i) => productService.getById(i.productId))).then((results) => {
+      const map: Record<string, Product> = {}
+      results.forEach((p) => { if (p) map[p.id] = p })
+      setCartProducts(map)
+    })
+  }, [items])
 
   const shippingForm = useForm<ShippingForm>({
     resolver: zodResolver(shippingSchema),
@@ -298,12 +309,23 @@ export function CheckoutPage() {
                 </p>
               </div>
               <Separator />
-              <div className="space-y-2">
-                {items.map((item) => (
-                  <div key={`${item.productId}-${item.size}`} className="flex justify-between text-sm">
-                    <span className="text-text-muted">{item.productId} × {item.quantity} ({item.size})</span>
-                  </div>
-                ))}
+              <div className="space-y-3">
+                {items.map((item) => {
+                  const p = cartProducts[item.productId]
+                  const price = p?.salePrice ?? p?.price ?? 0
+                  return (
+                    <div key={`${item.productId}-${item.size}`} className="flex items-center gap-3">
+                      {p?.images[0] && (
+                        <img src={p.images[0]} alt="" className="h-12 w-10 rounded object-cover shrink-0" />
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">{p?.title ?? '—'}</p>
+                        <p className="text-xs text-text-muted">Size {item.size} × {item.quantity}</p>
+                      </div>
+                      <p className="text-sm font-semibold shrink-0">{formatCurrency(price * item.quantity)}</p>
+                    </div>
+                  )
+                })}
               </div>
 
               {error && (

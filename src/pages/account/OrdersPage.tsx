@@ -65,7 +65,7 @@ export function OrdersPage() {
           <CardContent className="p-6">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
-                <p className="font-bold">{order.id}</p>
+                <p className="font-bold">#{order.id.slice(0, 8).toUpperCase()}</p>
                 <p className="text-sm text-text-muted">{formatDate(order.createdAt)}</p>
               </div>
               <Badge variant={STATUS_VARIANT[order.status] ?? 'outline'} className="capitalize">
