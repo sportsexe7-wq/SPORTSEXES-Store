@@ -4,9 +4,9 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { formatCurrency, formatDate } from '@/utils/format'
-import { Package } from 'lucide-react'
+import { Package, CheckCircle2 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 const STATUS_VARIANT: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
   pending: 'outline',
@@ -19,6 +19,8 @@ const STATUS_VARIANT: Record<string, 'default' | 'secondary' | 'destructive' | '
 export function OrdersPage() {
   const { user, loading } = useAuth()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const newOrderId = searchParams.get('new')
 
   const { data: orders = [], isLoading } = useQuery({
     queryKey: ['orders', user?.uid],
@@ -52,6 +54,12 @@ export function OrdersPage() {
 
   return (
     <div className="space-y-4">
+      {newOrderId && (
+        <div className="flex items-center gap-3 rounded-xl border border-brand/30 bg-brand/10 px-4 py-3 text-sm font-medium text-brand">
+          <CheckCircle2 className="h-5 w-5 shrink-0" />
+          Order placed successfully! We'll start processing it shortly.
+        </div>
+      )}
       {orders.map((order) => (
         <Card key={order.id}>
           <CardContent className="p-6">

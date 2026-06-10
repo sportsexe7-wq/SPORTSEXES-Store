@@ -31,6 +31,8 @@ export interface Order {
   userId: string
   items: OrderItem[]
   status: OrderStatus
+  paymentMethod: 'online' | 'cod'
+  paymentStatus: 'pending' | 'paid' | 'failed'
   subtotal: number
   shipping: number
   discount: number
@@ -38,6 +40,8 @@ export interface Order {
   couponCode?: string
   shippingAddress: ShippingAddress
   trackingNumber?: string
+  razorpayOrderId?: string
+  razorpayPaymentId?: string
   createdAt: string
   updatedAt: string
 }

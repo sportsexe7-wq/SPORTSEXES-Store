@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Check } from 'lucide-react'
+import { Check, CreditCard, Banknote } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -14,6 +14,12 @@ import { cn } from '@/utils/cn'
 import { orderService } from '@/services/orderService'
 import { productService } from '@/services/productService'
 import { useAuth } from '@/contexts/AuthContext'
+import {
+  createRazorpayOrder,
+  verifyPayment,
+  openRazorpayCheckout,
+  triggerCreateShipment,
+} from '@/services/paymentService'
 
 const shippingSchema = z.object({
   fullName: z.string().min(2, 'Name is required'),
@@ -25,32 +31,26 @@ const shippingSchema = z.object({
   pincode: z.string().min(6, 'Valid pincode required'),
 })
 
-const paymentSchema = z.object({
-  cardNumber: z.string().min(16, 'Valid card number required'),
-  expiry: z.string().min(5, 'MM/YY required'),
-  cvv: z.string().min(3, 'CVV required'),
-})
-
 type ShippingForm = z.infer<typeof shippingSchema>
-type PaymentForm = z.infer<typeof paymentSchema>
 
 const STEPS = ['Shipping', 'Payment', 'Review'] as const
 
 export function CheckoutPage() {
   const [step, setStep] = useState(0)
   const [shippingData, setShippingData] = useState<ShippingForm | null>(null)
-  const [paymentData, setPaymentData] = useState<PaymentForm | null>(null)
+  const [paymentMethod, setPaymentMethod] = useState<'online' | 'cod'>('online')
   const [placing, setPlacing] = useState(false)
+  const [error, setError] = useState('')
   const { items, clear } = useCart()
   const { user } = useAuth()
   const navigate = useNavigate()
 
   const shippingForm = useForm<ShippingForm>({
     resolver: zodResolver(shippingSchema),
-  })
-
-  const paymentForm = useForm<PaymentForm>({
-    resolver: zodResolver(paymentSchema),
+    defaultValues: {
+      fullName: user?.displayName ?? '',
+      email: user?.email ?? '',
+    },
   })
 
   const onShippingSubmit = (data: ShippingForm) => {
@@ -58,45 +58,104 @@ export function CheckoutPage() {
     setStep(1)
   }
 
-  const onPaymentSubmit = (data: PaymentForm) => {
-    setPaymentData(data)
-    setStep(2)
+  const buildOrderItems = async () => {
+    return Promise.all(
+      items.map(async (item) => {
+        const product = await productService.getById(item.productId)
+        return {
+          productId: item.productId,
+          title: product?.title ?? item.productId,
+          image: product?.images[0] ?? '',
+          size: item.size,
+          quantity: item.quantity,
+          price: product?.salePrice ?? product?.price ?? 0,
+        }
+      }),
+    )
   }
 
   const placeOrder = async () => {
     if (!shippingData) return
     setPlacing(true)
+    setError('')
+
     try {
-      const now = new Date().toISOString()
-      const orderItems = await Promise.all(
-        items.map(async (item) => {
-          const product = await productService.getById(item.productId)
-          return {
-            productId: item.productId,
-            title: product?.title ?? item.productId,
-            image: product?.images[0] ?? '',
-            size: item.size,
-            quantity: item.quantity,
-            price: product?.salePrice ?? product?.price ?? 0,
-          }
-        }),
-      )
+      const orderItems = await buildOrderItems()
       const subtotal = orderItems.reduce((s, i) => s + i.price * i.quantity, 0)
       const shipping = subtotal >= 2000 ? 0 : 99
-      await orderService.create({
-        userId: user?.uid ?? 'guest',
-        items: orderItems,
-        status: 'pending',
-        subtotal,
-        shipping,
-        discount: 0,
-        total: subtotal + shipping,
-        shippingAddress: shippingData,
-        createdAt: now,
-        updatedAt: now,
-      })
-      clear()
-      navigate('/account/orders')
+      const total = subtotal + shipping
+      const now = new Date().toISOString()
+
+      if (paymentMethod === 'online') {
+        // 1. Create a Firestore order (pending/unpaid)
+        const order = await orderService.create({
+          userId: user?.uid ?? 'guest',
+          items: orderItems,
+          status: 'pending',
+          paymentMethod: 'online',
+          paymentStatus: 'pending',
+          subtotal,
+          shipping,
+          discount: 0,
+          total,
+          shippingAddress: shippingData,
+          createdAt: now,
+          updatedAt: now,
+        })
+
+        // 2. Create Razorpay order via cloud function
+        const { razorpayOrderId, amount, currency } = await createRazorpayOrder(total, order.id)
+
+        // 3. Open Razorpay checkout
+        const paymentResponse = await openRazorpayCheckout({
+          amount,
+          razorpayOrderId,
+          currency,
+          prefill: {
+            name: shippingData.fullName,
+            email: shippingData.email,
+            contact: shippingData.phone,
+          },
+        })
+
+        // 4. Verify HMAC on server → marks order as paid
+        await verifyPayment({
+          razorpayOrderId: paymentResponse.razorpay_order_id,
+          razorpayPaymentId: paymentResponse.razorpay_payment_id,
+          razorpaySignature: paymentResponse.razorpay_signature,
+          orderId: order.id,
+        })
+
+        // 5. Create Shiprocket shipment (fire & forget)
+        triggerCreateShipment(order.id)
+
+        clear()
+        navigate(`/account/orders?new=${order.id}`)
+      } else {
+        // COD flow: just create order
+        const order = await orderService.create({
+          userId: user?.uid ?? 'guest',
+          items: orderItems,
+          status: 'pending',
+          paymentMethod: 'cod',
+          paymentStatus: 'pending',
+          subtotal,
+          shipping,
+          discount: 0,
+          total,
+          shippingAddress: shippingData,
+          createdAt: now,
+          updatedAt: now,
+        })
+
+        triggerCreateShipment(order.id)
+        clear()
+        navigate(`/account/orders?new=${order.id}`)
+      }
+    } catch (err: any) {
+      if (err?.message !== 'Payment cancelled') {
+        setError(err?.message ?? 'Something went wrong. Please try again.')
+      }
     } finally {
       setPlacing(false)
     }
@@ -128,7 +187,9 @@ export function CheckoutPage() {
         ))}
       </div>
 
-      <div className="mx-auto max-w-xl">
+      <div className="mx-auto max-w-xl space-y-4">
+
+        {/* ── Step 0: Shipping ── */}
         {step === 0 && (
           <Card>
             <CardContent className="p-6">
@@ -160,60 +221,101 @@ export function CheckoutPage() {
           </Card>
         )}
 
+        {/* ── Step 1: Payment method ── */}
         {step === 1 && (
           <Card>
             <CardContent className="p-6">
-              <h2 className="mb-6 text-lg font-bold">Payment Details</h2>
-              <form onSubmit={paymentForm.handleSubmit(onPaymentSubmit)} className="space-y-4">
-                <div>
-                  <Label htmlFor="cardNumber">Card Number</Label>
-                  <Input id="cardNumber" placeholder="4242 4242 4242 4242" className="mt-1" {...paymentForm.register('cardNumber')} />
-                  {paymentForm.formState.errors.cardNumber && (
-                    <p className="mt-1 text-xs text-red-500">{paymentForm.formState.errors.cardNumber.message}</p>
+              <h2 className="mb-6 text-lg font-bold">Payment Method</h2>
+              <div className="space-y-3">
+                <button
+                  type="button"
+                  onClick={() => setPaymentMethod('online')}
+                  className={cn(
+                    'flex w-full items-center gap-4 rounded-xl border-2 p-4 text-left transition-colors',
+                    paymentMethod === 'online' ? 'border-brand bg-brand/5' : 'border-border hover:border-brand/40',
                   )}
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="expiry">Expiry</Label>
-                    <Input id="expiry" placeholder="MM/YY" className="mt-1" {...paymentForm.register('expiry')} />
+                >
+                  <div className={cn('flex h-10 w-10 items-center justify-center rounded-full', paymentMethod === 'online' ? 'bg-brand text-black' : 'bg-surface-muted text-text-muted')}>
+                    <CreditCard className="h-5 w-5" />
                   </div>
                   <div>
-                    <Label htmlFor="cvv">CVV</Label>
-                    <Input id="cvv" placeholder="123" className="mt-1" {...paymentForm.register('cvv')} />
+                    <p className="font-semibold">Pay Online</p>
+                    <p className="text-xs text-text-muted">UPI · Cards · Net Banking · Wallets via Razorpay</p>
                   </div>
-                </div>
-                <div className="flex gap-3">
-                  <Button type="button" variant="outline" onClick={() => setStep(0)}>Back</Button>
-                  <Button type="submit" className="flex-1" size="lg">Review Order</Button>
-                </div>
-              </form>
+                  <div className={cn('ml-auto h-5 w-5 rounded-full border-2 flex items-center justify-center', paymentMethod === 'online' ? 'border-brand' : 'border-border')}>
+                    {paymentMethod === 'online' && <div className="h-2.5 w-2.5 rounded-full bg-brand" />}
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setPaymentMethod('cod')}
+                  className={cn(
+                    'flex w-full items-center gap-4 rounded-xl border-2 p-4 text-left transition-colors',
+                    paymentMethod === 'cod' ? 'border-brand bg-brand/5' : 'border-border hover:border-brand/40',
+                  )}
+                >
+                  <div className={cn('flex h-10 w-10 items-center justify-center rounded-full', paymentMethod === 'cod' ? 'bg-brand text-black' : 'bg-surface-muted text-text-muted')}>
+                    <Banknote className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="font-semibold">Cash on Delivery</p>
+                    <p className="text-xs text-text-muted">Pay when your order arrives</p>
+                  </div>
+                  <div className={cn('ml-auto h-5 w-5 rounded-full border-2 flex items-center justify-center', paymentMethod === 'cod' ? 'border-brand' : 'border-border')}>
+                    {paymentMethod === 'cod' && <div className="h-2.5 w-2.5 rounded-full bg-brand" />}
+                  </div>
+                </button>
+              </div>
+
+              <div className="mt-6 flex gap-3">
+                <Button type="button" variant="outline" onClick={() => setStep(0)}>Back</Button>
+                <Button className="flex-1" size="lg" onClick={() => setStep(2)}>Review Order</Button>
+              </div>
             </CardContent>
           </Card>
         )}
 
+        {/* ── Step 2: Review ── */}
         {step === 2 && shippingData && (
           <Card>
             <CardContent className="space-y-4 p-6">
               <h2 className="text-lg font-bold">Review Your Order</h2>
+
               <div>
                 <p className="text-sm font-semibold">Shipping to</p>
-                <p className="text-sm text-text-muted">
+                <p className="mt-1 text-sm text-text-muted">
                   {shippingData.fullName}<br />
                   {shippingData.address}, {shippingData.city}<br />
-                  {shippingData.state} - {shippingData.pincode}
+                  {shippingData.state} — {shippingData.pincode}
                 </p>
               </div>
               <Separator />
               <div>
                 <p className="text-sm font-semibold">Payment</p>
-                <p className="text-sm text-text-muted">
-                  Card ending in {paymentData?.cardNumber.slice(-4)}
+                <p className="mt-1 text-sm text-text-muted">
+                  {paymentMethod === 'online' ? 'Online Payment (Razorpay)' : 'Cash on Delivery'}
                 </p>
               </div>
-              <div className="flex gap-3 pt-4">
+              <Separator />
+              <div className="space-y-2">
+                {items.map((item) => (
+                  <div key={`${item.productId}-${item.size}`} className="flex justify-between text-sm">
+                    <span className="text-text-muted">{item.productId} × {item.quantity} ({item.size})</span>
+                  </div>
+                ))}
+              </div>
+
+              {error && (
+                <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-400">{error}</p>
+              )}
+
+              <div className="flex gap-3 pt-2">
                 <Button variant="outline" onClick={() => setStep(1)}>Back</Button>
                 <Button className="flex-1" size="lg" onClick={placeOrder} disabled={placing}>
-                  {placing ? 'Placing order…' : 'Place Order'}
+                  {placing
+                    ? paymentMethod === 'online' ? 'Opening payment…' : 'Placing order…'
+                    : paymentMethod === 'online' ? 'Pay Now' : 'Place Order (COD)'}
                 </Button>
               </div>
             </CardContent>
