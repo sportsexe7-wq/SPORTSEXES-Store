@@ -8,13 +8,13 @@ const TRUST_ITEMS = [
 
 export function TrustBar() {
   return (
-    <section className="border-y border-border bg-surface-elevated py-2">
+    <section className="border-y border-border bg-surface-elevated py-4 md:py-5">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-center gap-4 md:gap-10">
+        <div className="flex items-start justify-center gap-8 md:gap-16">
           {TRUST_ITEMS.map(({ icon: Icon, label }) => (
-            <div key={label} className="flex items-center gap-1.5 text-xs font-semibold md:text-sm">
-              <Icon className="h-3.5 w-3.5 shrink-0 text-brand" />
-              <span className="whitespace-nowrap">{label}</span>
+            <div key={label} className="flex flex-col items-center gap-1.5 text-center">
+              <Icon className="h-6 w-6 shrink-0 text-brand md:h-7 md:w-7" />
+              <span className="whitespace-nowrap text-[11px] font-semibold md:text-sm">{label}</span>
             </div>
           ))}
         </div>

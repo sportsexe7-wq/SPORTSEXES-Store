@@ -35,7 +35,7 @@ export function HeroSection() {
         <div className="flex">
           {HERO_SLIDES.map((slide) => (
             <div key={slide.id} className="relative min-w-0 flex-[0_0_100%]">
-              <div className="relative min-h-[38vh] md:min-h-[44vh]">
+              <div className="relative min-h-[32vh] md:min-h-[38vh]">
                 {slide.type === 'product-video' ? (
                   <video autoPlay muted loop playsInline poster={slide.poster}
                     className="absolute inset-0 h-full w-full object-cover">
