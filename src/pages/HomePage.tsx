@@ -38,8 +38,8 @@ export function HomePage() {
       {/* Top header — site name + VIP + Login */}
       <div className="border-b border-border bg-surface px-4 py-2.5">
         <div className="container mx-auto flex items-center justify-between">
-          <Link to="/" className="text-lg font-black tracking-tighter text-text">
-            SPORT<span className="text-brand">SEXE</span>
+          <Link to="/">
+            <img src="/sportsexe.png" alt="SPORTSEXE" className="h-8 w-auto" />
           </Link>
           <div className="flex items-center gap-3">
             <Link

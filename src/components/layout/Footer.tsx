@@ -25,9 +25,7 @@ export function Footer() {
       <div className="container mx-auto px-4 py-12">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <p className="text-lg font-black tracking-tighter">
-              SPORT<span className="text-brand">SEXE</span>
-            </p>
+            <img src="/sportsexe.png" alt="SPORTSEXE" className="h-8 w-auto" />
             <p className="mt-3 text-sm leading-relaxed text-text-muted">
               Premium imported football jerseys — clubs, nationals, retro &amp; World Cup editions delivered across India.
             </p>
