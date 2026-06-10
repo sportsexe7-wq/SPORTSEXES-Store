@@ -49,6 +49,7 @@ export function ProductDetailPage() {
   const discount = calculateDiscount(product.price, product.salePrice)
   const displayPrice = product.salePrice ?? product.price
   const inStock = product.stock > 0
+  const lowStock = product.stock > 0 && product.stock <= 5
 
   const handleAddToCart = () => {
     addItem(product.id, selectedSize, quantity)
@@ -210,8 +211,10 @@ export function ProductDetailPage() {
             </div>
           </div>
 
-          <p className={cn('text-sm font-medium', inStock ? 'text-brand' : 'text-red-500')}>
-            {inStock ? `${product.stock} in stock` : 'Out of stock'}
+          <p className={cn('text-sm font-medium', inStock ? (lowStock ? 'text-orange-400' : 'text-brand') : 'text-red-500')}>
+            {!inStock && 'Out of stock'}
+            {lowStock && `Only ${product.stock} left — order soon!`}
+            {inStock && !lowStock && 'In stock'}
           </p>
 
           <div className="flex flex-col gap-3 sm:flex-row">

@@ -21,9 +21,12 @@ export function ProductCard({ product, onQuickView, className }: ProductCardProp
   const discount = calculateDiscount(product.price, product.salePrice)
   const displayPrice = product.salePrice ?? product.price
   const isWishlisted = has(product.id)
+  const outOfStock = product.stock <= 0
+  const lowStock = product.stock > 0 && product.stock <= 5
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault()
+    if (outOfStock) return
     addItem(product.id, product.sizes[0])
   }
 
@@ -39,39 +42,45 @@ export function ProductCard({ product, onQuickView, className }: ProductCardProp
           <img
             src={product.images[0]}
             alt={product.title}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className={cn(
+              'h-full w-full object-cover transition-transform duration-500 group-hover:scale-105',
+              outOfStock && 'opacity-50',
+            )}
             loading="lazy"
           />
-          {discount > 0 && (
+          {/* Out of stock overlay */}
+          {outOfStock && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+              <span className="rounded-full bg-black/80 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-white">
+                Out of Stock
+              </span>
+            </div>
+          )}
+          {!outOfStock && discount > 0 && (
             <Badge className="absolute left-3 top-3">-{discount}%</Badge>
           )}
-          {product.stock <= 10 && product.stock > 0 && (
+          {lowStock && (
             <Badge variant="destructive" className="absolute right-3 top-3">
-              Low Stock
+              Only {product.stock} left
             </Badge>
           )}
-          <div className="absolute inset-x-0 bottom-0 flex translate-y-full gap-2 p-3 transition-transform duration-300 group-hover:translate-y-0">
-            <Button
-              size="sm"
-              className="flex-1"
-              onClick={handleAddToCart}
-            >
-              <ShoppingBag className="h-4 w-4" />
-              Add
-            </Button>
-            {onQuickView && (
-              <Button
-                size="icon"
-                variant="secondary"
-                onClick={(e) => {
-                  e.preventDefault()
-                  onQuickView(product)
-                }}
-              >
-                <Eye className="h-4 w-4" />
+          {!outOfStock && (
+            <div className="absolute inset-x-0 bottom-0 flex translate-y-full gap-2 p-3 transition-transform duration-300 group-hover:translate-y-0">
+              <Button size="sm" className="flex-1" onClick={handleAddToCart}>
+                <ShoppingBag className="h-4 w-4" />
+                Add
               </Button>
-            )}
-          </div>
+              {onQuickView && (
+                <Button
+                  size="icon"
+                  variant="secondary"
+                  onClick={(e) => { e.preventDefault(); onQuickView(product) }}
+                >
+                  <Eye className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+          )}
         </div>
         <div className="mt-3 space-y-1">
           <p className="text-xs uppercase tracking-wider text-text-muted">{product.category}</p>
