@@ -36,10 +36,14 @@ export function HomePage() {
   return (
     <>
       {/* Top header — site name + VIP + Login */}
-      <div className="border-b border-border bg-surface px-4 py-2.5">
+      <div className="border-b border-border bg-surface px-4 py-2">
         <div className="container mx-auto flex items-center justify-between">
-          <Link to="/">
-            <img src="/Sportsexe.png" alt="SPORTSEXE" className="h-16 w-auto md:h-20" />
+          <Link to="/" className="inline-flex items-center overflow-visible">
+            <img
+              src="/Sportsexe.png"
+              alt="SPORTSEXE"
+              className="h-8 w-auto origin-left scale-[1.9] md:h-10 md:scale-[1.7]"
+            />
           </Link>
           <div className="flex items-center gap-3">
             <Link
