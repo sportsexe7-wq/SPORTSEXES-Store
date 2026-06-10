@@ -72,10 +72,10 @@ export function CheckoutPage() {
   const buildOrderItems = async () => {
     return Promise.all(
       items.map(async (item) => {
-        const product = await productService.getById(item.productId)
+        const product = cartProducts[item.productId] ?? await productService.getById(item.productId)
         return {
           productId: item.productId,
-          title: product?.title ?? item.productId,
+          title: product?.title ?? 'Product',
           image: product?.images[0] ?? '',
           size: item.size,
           quantity: item.quantity,
