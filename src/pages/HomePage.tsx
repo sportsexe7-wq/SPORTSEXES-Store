@@ -98,11 +98,11 @@ export function HomePage() {
       <HeroSection />
       <TrustBar />
 
-      {/* 1. Shop by Country (FIFA flags) */}
-      <ShopByCategorySection />
-
-      {/* 2. Best Sellers — most-loved jerseys */}
+      {/* 1. Best Sellers */}
       <BestSellersSection onQuickView={setQuickViewProduct} />
+
+      {/* 2. Shop by Country (FIFA flags) */}
+      <ShopByCategorySection />
 
       {/* 3. Trending Now */}
       <ProductCarousel
@@ -112,11 +112,11 @@ export function HomePage() {
         onQuickView={setQuickViewProduct}
       />
 
-      {/* 4. Reviews */}
-      <ReviewsSection />
-
-      {/* 5. Shop by Category (6 accessory cards) */}
+      {/* 4. Shop by Category (6 accessory cards) */}
       <FeaturedCollections />
+
+      {/* Reviews */}
+      <ReviewsSection />
 
       <Modal
         open={!!quickViewProduct}
