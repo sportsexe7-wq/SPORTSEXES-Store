@@ -39,7 +39,7 @@ export function HomePage() {
       <div className="border-b border-border bg-surface px-4 py-2.5">
         <div className="container mx-auto flex items-center justify-between">
           <Link to="/">
-            <img src="/sportsexe.png" alt="SPORTSEXE" className="h-8 w-auto" />
+            <img src="/Sportsexe.png" alt="SPORTSEXE" className="h-8 w-auto" />
           </Link>
           <div className="flex items-center gap-3">
             <Link
