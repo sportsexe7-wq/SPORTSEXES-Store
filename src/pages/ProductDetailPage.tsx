@@ -48,8 +48,14 @@ export function ProductDetailPage() {
 
   const discount = calculateDiscount(product.price, product.salePrice)
   const displayPrice = product.salePrice ?? product.price
-  const inStock = product.stock > 0
-  const lowStock = product.stock > 0 && product.stock <= 5
+
+  const getSizeStock = (size: ProductSize): number => {
+    if (product.sizeStock && size in product.sizeStock) return product.sizeStock[size] ?? 0
+    return product.stock
+  }
+  const selectedSizeStock = getSizeStock(selectedSize)
+  const inStock = selectedSizeStock > 0
+  const lowStock = selectedSizeStock > 0 && selectedSizeStock <= 5
 
   const handleAddToCart = () => {
     addItem(product.id, selectedSize, quantity)
@@ -172,22 +178,42 @@ export function ProductDetailPage() {
           <div>
             <p className="mb-3 text-sm font-semibold">Select Size</p>
             <div className="flex flex-wrap gap-2">
-              {product.sizes.map((size) => (
-                <button
-                  key={size}
-                  type="button"
-                  onClick={() => setSelectedSize(size)}
-                  className={cn(
-                    'flex h-11 w-11 items-center justify-center rounded-md border text-sm font-semibold transition-colors',
-                    selectedSize === size
-                      ? 'border-brand bg-brand text-black'
-                      : 'border-border hover:border-white',
-                  )}
-                >
-                  {size}
-                </button>
-              ))}
+              {product.sizes.map((size) => {
+                const stock = getSizeStock(size)
+                const oos = stock <= 0
+                const low = stock > 0 && stock <= 5
+                return (
+                  <button
+                    key={size}
+                    type="button"
+                    disabled={oos}
+                    onClick={() => !oos && setSelectedSize(size)}
+                    className={cn(
+                      'relative flex h-11 w-11 items-center justify-center rounded-md border text-sm font-semibold transition-colors',
+                      oos
+                        ? 'cursor-not-allowed border-border text-text-muted opacity-40'
+                        : selectedSize === size
+                          ? 'border-brand bg-brand text-black'
+                          : 'border-border hover:border-white',
+                    )}
+                    title={oos ? 'Out of stock' : low ? `Only ${stock} left` : undefined}
+                  >
+                    {size}
+                    {oos && (
+                      <span className="absolute inset-x-1 top-1/2 h-px -rotate-45 bg-text-muted/50" />
+                    )}
+                    {low && !oos && (
+                      <span className="absolute -right-1 -top-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-orange-500 text-[8px] font-bold text-white">
+                        {stock}
+                      </span>
+                    )}
+                  </button>
+                )
+              })}
             </div>
+            {lowStock && (
+              <p className="text-xs text-orange-400">Only {selectedSizeStock} left in size {selectedSize}</p>
+            )}
           </div>
 
           <div>
@@ -204,7 +230,7 @@ export function ProductDetailPage() {
               <Button
                 variant="outline"
                 size="icon"
-                onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
+                onClick={() => setQuantity(Math.min(selectedSizeStock, quantity + 1))}
               >
                 <Plus className="h-4 w-4" />
               </Button>
@@ -212,9 +238,7 @@ export function ProductDetailPage() {
           </div>
 
           <p className={cn('text-sm font-medium', inStock ? (lowStock ? 'text-orange-400' : 'text-brand') : 'text-red-500')}>
-            {!inStock && 'Out of stock'}
-            {lowStock && `Only ${product.stock} left — order soon!`}
-            {inStock && !lowStock && 'In stock'}
+            {!inStock ? `Out of stock in size ${selectedSize}` : lowStock ? `Only ${selectedSizeStock} left — order soon!` : 'In stock'}
           </p>
 
           <div className="flex flex-col gap-3 sm:flex-row">

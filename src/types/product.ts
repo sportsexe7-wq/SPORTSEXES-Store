@@ -1,5 +1,7 @@
 export type ProductSize = 'S' | 'M' | 'L' | 'XL'
 
+export type SizeStock = Partial<Record<ProductSize, number>>
+
 export interface Product {
   id: string
   title: string
@@ -8,7 +10,8 @@ export interface Product {
   shortDescription: string
   price: number
   salePrice?: number
-  stock: number
+  stock: number          // total across all sizes (kept for listing queries)
+  sizeStock?: SizeStock  // per-size breakdown
   category: string
   subCategory: string
   team: string
