@@ -44,7 +44,7 @@ export function CheckoutPage() {
   const [placing, setPlacing] = useState(false)
   const [error, setError] = useState('')
   const [cartProducts, setCartProducts] = useState<Record<string, Product>>({})
-  const { items, clear } = useCart()
+  const { items, clear, coupon } = useCart()
   const { user } = useAuth()
   const navigate = useNavigate()
 
@@ -93,8 +93,9 @@ export function CheckoutPage() {
     try {
       const orderItems = await buildOrderItems()
       const subtotal = orderItems.reduce((s, i) => s + i.price * i.quantity, 0)
-      const shipping = subtotal >= 2000 ? 0 : 99
-      const total = subtotal + shipping
+      const discount = coupon === 'SPORT10' ? Math.round(subtotal * 0.1) : 0
+      const shipping = subtotal - discount >= 2000 ? 0 : 99
+      const total = subtotal - discount + shipping
       const now = new Date().toISOString()
 
       if (paymentMethod === 'online') {
@@ -107,7 +108,8 @@ export function CheckoutPage() {
           paymentStatus: 'pending',
           subtotal,
           shipping,
-          discount: 0,
+          discount,
+          ...(coupon ? { couponCode: coupon } : {}),
           total,
           shippingAddress: shippingData,
           createdAt: now,
@@ -152,7 +154,8 @@ export function CheckoutPage() {
           paymentStatus: 'pending',
           subtotal,
           shipping,
-          discount: 0,
+          discount,
+          ...(coupon ? { couponCode: coupon } : {}),
           total,
           shippingAddress: shippingData,
           createdAt: now,
@@ -288,7 +291,17 @@ export function CheckoutPage() {
         )}
 
         {/* ── Step 2: Review ── */}
-        {step === 2 && shippingData && (
+        {step === 2 && shippingData && (() => {
+          const subtotal = items.reduce((s, item) => {
+            const p = cartProducts[item.productId]
+            const price = p?.salePrice ?? p?.price ?? 0
+            return s + price * item.quantity
+          }, 0)
+          const discount = coupon === 'SPORT10' ? Math.round(subtotal * 0.1) : 0
+          const shipping = subtotal - discount >= 2000 ? 0 : 99
+          const total = subtotal - discount + shipping
+
+          return (
           <Card>
             <CardContent className="space-y-4 p-6">
               <h2 className="text-lg font-bold">Review Your Order</h2>
@@ -328,6 +341,31 @@ export function CheckoutPage() {
                 })}
               </div>
 
+              <Separator />
+
+              {/* Price breakdown */}
+              <div className="space-y-1.5 text-sm">
+                <div className="flex justify-between text-text-muted">
+                  <span>Subtotal</span>
+                  <span>{formatCurrency(subtotal)}</span>
+                </div>
+                {discount > 0 && (
+                  <div className="flex justify-between text-brand">
+                    <span>Coupon ({coupon})</span>
+                    <span>− {formatCurrency(discount)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between text-text-muted">
+                  <span>Shipping</span>
+                  <span>{shipping === 0 ? 'FREE' : formatCurrency(shipping)}</span>
+                </div>
+                <Separator className="my-2" />
+                <div className="flex justify-between text-base font-bold">
+                  <span>Total</span>
+                  <span>{formatCurrency(total)}</span>
+                </div>
+              </div>
+
               {error && (
                 <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-400">{error}</p>
               )}
@@ -342,7 +380,8 @@ export function CheckoutPage() {
               </div>
             </CardContent>
           </Card>
-        )}
+          )
+        })()}
       </div>
     </div>
   )
