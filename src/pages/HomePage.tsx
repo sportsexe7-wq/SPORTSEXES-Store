@@ -39,7 +39,7 @@ export function HomePage() {
       <div className="border-b border-border bg-surface px-4 py-2.5">
         <div className="container mx-auto flex items-center justify-between">
           <Link to="/">
-            <img src="/Sportsexe.png" alt="SPORTSEXE" className="h-8 w-auto" />
+            <img src="/Sportsexe.png" alt="SPORTSEXE" className="h-12 w-25" />
           </Link>
           <div className="flex items-center gap-3">
             <Link
@@ -92,16 +92,23 @@ export function HomePage() {
 
       <HeroSection />
       <TrustBar />
-      <BestSellersSection onQuickView={setQuickViewProduct} />
+
+      {/* 1. Shop by Country (FIFA flags) */}
       <ShopByCategorySection />
-      <FeaturedCollections />
+
+      {/* 2. Trending Now */}
       <ProductCarousel
         products={trending}
         title="Trending Now"
         subtitle="What fans are buying this week"
         onQuickView={setQuickViewProduct}
-        className="bg-surface-elevated"
       />
+
+      {/* 3. Shop by Category (6 accessory cards) */}
+      <FeaturedCollections />
+
+      {/* Best Sellers — most-loved jerseys */}
+      <BestSellersSection onQuickView={setQuickViewProduct} />
 
       <Modal
         open={!!quickViewProduct}
