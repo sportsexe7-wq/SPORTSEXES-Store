@@ -1,4 +1,4 @@
-import type { CartItem, ProductSize } from '@/types'
+import type { CartItem, Coupon, ProductSize } from '@/types'
 
 const CART_KEY = 'sportsexe_cart'
 const WISHLIST_KEY = 'sportsexe_wishlist'
@@ -35,10 +35,10 @@ function subscribe(listener: CartListener): () => void {
 // In-memory snapshots — must keep stable references for useSyncExternalStore
 let cartItems: CartItem[] = loadFromStorage(CART_KEY, EMPTY_CART)
 let wishlistIds: string[] = loadFromStorage(WISHLIST_KEY, EMPTY_WISHLIST)
-let couponCode: string | undefined = loadFromStorage<{ couponCode?: string }>(
+let coupon: Coupon | undefined = loadFromStorage<{ coupon?: Coupon }>(
   CART_META_KEY,
   {},
-).couponCode
+).coupon
 
 function getItems(): CartItem[] {
   return cartItems
@@ -48,8 +48,8 @@ function getItemCount(): number {
   return cartItems.reduce((sum, i) => sum + i.quantity, 0)
 }
 
-function getCoupon(): string | undefined {
-  return couponCode
+function getCoupon(): Coupon | undefined {
+  return coupon
 }
 
 function setCartItems(items: CartItem[]) {
@@ -88,9 +88,9 @@ function clear(): void {
   notifyListeners()
 }
 
-function setCoupon(code: string | undefined): void {
-  couponCode = code
-  saveToStorage(CART_META_KEY, { couponCode: code })
+function setCoupon(next: Coupon | undefined): void {
+  coupon = next
+  saveToStorage(CART_META_KEY, { coupon: next })
   notifyListeners()
 }
 

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import useEmblaCarousel from 'embla-carousel-react'
 import Autoplay from 'embla-carousel-autoplay'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronLeft, ChevronRight, Star, Play, Crown, Clock, Flag, ShoppingBag } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Star, Play, Flag, Sparkles } from 'lucide-react'
 import { HERO_SLIDES } from '@/constants/heroSlides'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/utils/cn'
@@ -36,7 +36,7 @@ export function HeroSection() {
           {HERO_SLIDES.map((slide) => (
             <div key={slide.id} className="relative min-w-0 flex-[0_0_100%]">
               <div className="relative min-h-[32vh] md:min-h-[38vh]">
-                {slide.type === 'product-video' ? (
+                {slide.type === 'asmr' ? (
                   <video autoPlay muted loop playsInline poster={slide.poster}
                     className="absolute inset-0 h-full w-full object-cover">
                     <source src={slide.video} type="video/mp4" />
@@ -91,24 +91,51 @@ function SlideContent({ slide }: { slide: (typeof HERO_SLIDES)[number] }) {
       transition={{ duration: 0.4 }}
       className="max-w-xl"
     >
-      {slide.type === 'wear-the-game' && (
+      {slide.type === 'asmr' && (
         <div className="space-y-3">
-          <span className="inline-block rounded-full border border-white/25 bg-white/10 px-3 py-0.5 text-[11px] font-semibold uppercase tracking-widest text-white">
-            Premium Football Jerseys
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-3 py-0.5 text-[11px] font-semibold uppercase tracking-widest text-white">
+            <Play className="h-3 w-3" /> Feel the Quality
           </span>
-          <h1 className="text-3xl font-black leading-tight tracking-tight text-white md:text-4xl lg:text-5xl">
-            Wear the Game.{' '}
-            <span className="text-brand">Own the Moment.</span>
-          </h1>
+          <h2 className="text-3xl font-black leading-tight tracking-tight text-white md:text-4xl lg:text-5xl">
+            Premium Fabric.{' '}
+            <span className="text-brand">Every Stitch.</span>
+          </h2>
           <p className="text-sm text-white/75 md:text-base">
-            Clubs, nationals &amp; retro — delivered across India.
+            Pro-grade jerseys inspected before every shipment — delivered across India.
           </p>
-          <div className="flex gap-2 pt-1">
-            <Button asChild size="sm"><Link to="/shop">Shop Now</Link></Button>
-            <Button asChild size="sm" variant="outline" className="border-white/30 bg-white/10 text-white hover:bg-white/20">
-              <Link to="/#shop-by-category">By Country</Link>
-            </Button>
-          </div>
+          <Button asChild size="sm" className="mt-1"><Link to="/shop">Shop Now</Link></Button>
+        </div>
+      )}
+
+      {slide.type === 'portugal' && (
+        <div className="space-y-3">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-3 py-0.5 text-[11px] font-semibold uppercase tracking-widest text-white">
+            🇵🇹 Portugal Collection
+          </span>
+          <h2 className="text-3xl font-black leading-tight tracking-tight text-white md:text-4xl lg:text-5xl">
+            Ronaldo's Nation.{' '}
+            <span className="text-brand">Your Jersey.</span>
+          </h2>
+          <p className="text-sm text-white/75 md:text-base">
+            Home, away &amp; retro — Portugal kits for every true fan.
+          </p>
+          <Button asChild size="sm" className="mt-1"><Link to="/category/portugal">Shop Portugal</Link></Button>
+        </div>
+      )}
+
+      {slide.type === 'flags' && (
+        <div className="space-y-3">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-3 py-0.5 text-[11px] font-semibold uppercase tracking-widest text-white">
+            <Flag className="h-3 w-3" /> Fan Flags
+          </span>
+          <h2 className="text-3xl font-black leading-tight tracking-tight text-white md:text-4xl lg:text-5xl">
+            Rep Your Nation.{' '}
+            <span className="text-brand">Fly the Flag.</span>
+          </h2>
+          <p className="text-sm text-white/75 md:text-base">
+            High-quality nation flags — perfect for match days &amp; fan zones.
+          </p>
+          <Button asChild size="sm" className="mt-1"><Link to="/category/flags">Shop Flags</Link></Button>
         </div>
       )}
 
@@ -130,88 +157,19 @@ function SlideContent({ slide }: { slide: (typeof HERO_SLIDES)[number] }) {
         </div>
       )}
 
-      {slide.type === 'product-video' && (
+      {slide.type === 'latest-launches' && (
         <div className="space-y-3">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-3 py-0.5 text-[11px] font-semibold uppercase tracking-widest text-white">
-            <Play className="h-3 w-3" /> See Our Quality
+            <Sparkles className="h-3 w-3" /> New Arrivals
           </span>
           <h2 className="text-3xl font-black leading-tight tracking-tight text-white md:text-4xl lg:text-5xl">
-            Feel the Fabric.{' '}
-            <span className="text-brand">Live the Match.</span>
+            Just Dropped.{' '}
+            <span className="text-brand">Don't Miss Out.</span>
           </h2>
           <p className="text-sm text-white/75 md:text-base">
-            Premium stitching &amp; authentic prints — inspected before every shipment.
+            Fresh kits added — clubs, countries &amp; retro editions. Limited stock.
           </p>
-          <Button asChild size="sm" className="mt-1"><Link to="/shop">Explore Jerseys</Link></Button>
-        </div>
-      )}
-
-      {slide.type === 'world-cup' && (
-        <div className="space-y-3">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-3 py-0.5 text-[11px] font-semibold uppercase tracking-widest text-white">
-            <Crown className="h-3 w-3" /> World Cup 2026
-          </span>
-          <h2 className="text-3xl font-black leading-tight tracking-tight text-white md:text-4xl lg:text-5xl">
-            The Biggest Stage.{' '}
-            <span className="text-brand">The Best Kits.</span>
-          </h2>
-          <p className="text-sm text-white/75 md:text-base">
-            Argentina, France, Brazil &amp; more — shop now before they sell out.
-          </p>
-          <Button asChild size="sm" className="mt-1"><Link to="/category/world-cup">Shop World Cup</Link></Button>
-        </div>
-      )}
-
-      {slide.type === 'world-cup-flags' && (
-        <div className="space-y-3">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-3 py-0.5 text-[11px] font-semibold uppercase tracking-widest text-white">
-            <Flag className="h-3 w-3" /> World Cup Flags
-          </span>
-          <h2 className="text-3xl font-black leading-tight tracking-tight text-white md:text-4xl lg:text-5xl">
-            Rep Your Nation.{' '}
-            <span className="text-brand">Fly the Flag.</span>
-          </h2>
-          <p className="text-sm text-white/75 md:text-base">
-            Official-style World Cup nation flags — perfect for match days &amp; fan zones.
-          </p>
-          <Button asChild size="sm" className="mt-1"><Link to="/shop?q=flag">Shop Flags</Link></Button>
-        </div>
-      )}
-
-      {slide.type === 'accessories' && (
-        <div className="space-y-3">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-3 py-0.5 text-[11px] font-semibold uppercase tracking-widest text-white">
-            <ShoppingBag className="h-3 w-3" /> Now Available
-          </span>
-          <h2 className="text-3xl font-black leading-tight tracking-tight text-white md:text-4xl lg:text-5xl">
-            More Than Jerseys.{' '}
-            <span className="text-brand">Complete Your Kit.</span>
-          </h2>
-          <p className="text-sm text-white/75 md:text-base">
-            Long socks, shin guards, IPL jerseys &amp; fan flags — everything a fan needs.
-          </p>
-          <div className="flex gap-2 pt-1">
-            <Button asChild size="sm"><Link to="/category/accessories">Shop Accessories</Link></Button>
-            <Button asChild size="sm" variant="outline" className="border-white/30 bg-white/10 text-white hover:bg-white/20">
-              <Link to="/category/ipl">IPL Jerseys</Link>
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {slide.type === 'retro-collection' && (
-        <div className="space-y-3">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-3 py-0.5 text-[11px] font-semibold uppercase tracking-widest text-white">
-            <Clock className="h-3 w-3" /> Retro Collection
-          </span>
-          <h2 className="text-3xl font-black leading-tight tracking-tight text-white md:text-4xl lg:text-5xl">
-            Relive the Classics.{' '}
-            <span className="text-brand">Own the History.</span>
-          </h2>
-          <p className="text-sm text-white/75 md:text-base">
-            Iconic kits from the 80s, 90s &amp; 2000s — limited stock, authentic feel.
-          </p>
-          <Button asChild size="sm" className="mt-1"><Link to="/category/retro">Shop Retro</Link></Button>
+          <Button asChild size="sm" className="mt-1"><Link to="/shop">See What's New</Link></Button>
         </div>
       )}
     </motion.div>

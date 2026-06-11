@@ -1,23 +1,24 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { Minus, Plus, Trash2, ShoppingBag } from 'lucide-react'
+import { Minus, Plus, Trash2, ShoppingBag, X } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
 import { productService } from '@/services/productService'
+import { couponService } from '@/services/couponService'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
 import { Card, CardContent } from '@/components/ui/card'
 import { formatCurrency } from '@/utils/format'
-import { useState } from 'react'
 
 const SHIPPING_THRESHOLD = 2999
 const SHIPPING_COST = 99
 
 export function CartPage() {
   const { items, updateQuantity, removeItem, setCoupon, coupon } = useCart()
-  const [couponInput, setCouponInput] = useState(coupon ?? '')
+  const [couponInput, setCouponInput] = useState(coupon?.code ?? '')
   const [couponError, setCouponError] = useState('')
+  const [applyingCoupon, setApplyingCoupon] = useState(false)
 
   const productIds = items.map((i) => i.productId)
 
@@ -39,25 +40,63 @@ export function CartPage() {
   }, [items, products])
 
   const subtotal = cartLines.reduce((sum, l) => sum + l.lineTotal, 0)
-  const shipping = subtotal >= SHIPPING_THRESHOLD || subtotal === 0 ? 0 : SHIPPING_COST
-  const discount = coupon === 'SPORT10' ? Math.round(subtotal * 0.1) : 0
-  const total = subtotal + shipping - discount
+  const validation = couponService.validate(coupon, subtotal)
+  const discount = validation.discount
+  const freeShipping = validation.freeShipping
+  const shipping = subtotal === 0
+    ? 0
+    : freeShipping
+      ? 0
+      : subtotal - discount >= SHIPPING_THRESHOLD
+        ? 0
+        : SHIPPING_COST
+  const total = subtotal - discount + shipping
 
-  const applyCoupon = () => {
-    if (couponInput.toUpperCase() === 'SPORT10') {
-      setCoupon('SPORT10')
-      setCouponError('')
-    } else {
-      setCouponError('Invalid coupon code')
-      setCoupon(undefined)
+  // If the saved coupon is now invalid (became inactive / expired / minOrder no longer met),
+  // surface that to the user rather than silently giving 0 discount
+  useEffect(() => {
+    if (validation.error && coupon) {
+      setCouponError(validation.error)
     }
+  }, [validation.error, coupon])
+
+  const applyCoupon = async () => {
+    const code = couponInput.trim().toUpperCase()
+    if (!code) return
+    setApplyingCoupon(true)
+    setCouponError('')
+    try {
+      const found = await couponService.findByCode(code)
+      if (!found) {
+        setCoupon(undefined)
+        setCouponError('Invalid coupon code')
+        return
+      }
+      const result = couponService.validate(found, subtotal)
+      if (result.error) {
+        setCoupon(undefined)
+        setCouponError(result.error)
+        return
+      }
+      setCoupon(found)
+    } catch {
+      setCouponError('Could not apply coupon — please try again')
+    } finally {
+      setApplyingCoupon(false)
+    }
+  }
+
+  const removeCoupon = () => {
+    setCoupon(undefined)
+    setCouponInput('')
+    setCouponError('')
   }
 
   if (!items.length) {
     return (
-      <div className="container mx-auto px-4 py-20 text-center">
+      <div className="container mx-auto flex min-h-[55vh] flex-col items-center justify-center px-4 py-16 text-center">
         <ShoppingBag className="mx-auto h-16 w-16 text-text-muted" />
-        <h1 className="mt-4 text-2xl font-bold">Your cart is empty</h1>
+        <h1 className="mt-4 text-2xl font-bold tracking-tight md:text-3xl">Your cart is empty</h1>
         <p className="mt-2 text-text-muted">Discover premium jerseys and gear up for match day.</p>
         <Button asChild className="mt-6">
           <Link to="/shop">Continue Shopping</Link>
@@ -68,7 +107,7 @@ export function CartPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
-      <h1 className="mb-8 text-3xl font-bold">Shopping Cart</h1>
+      <h1 className="mb-8 text-3xl font-bold tracking-tight md:text-4xl">Shopping Cart</h1>
       <div className="grid gap-8 lg:grid-cols-3">
         <div className="space-y-4 lg:col-span-2">
           {cartLines.map((line) => (
@@ -140,10 +179,16 @@ export function CartPage() {
                 <span className="text-text-muted">Shipping</span>
                 <span>{shipping === 0 ? 'Free' : formatCurrency(shipping)}</span>
               </div>
-              {discount > 0 && (
+              {discount > 0 && coupon && (
                 <div className="flex justify-between text-sm text-brand">
-                  <span>Discount (SPORT10)</span>
+                  <span>Discount ({coupon.code})</span>
                   <span>-{formatCurrency(discount)}</span>
+                </div>
+              )}
+              {freeShipping && coupon && (
+                <div className="flex justify-between text-sm text-brand">
+                  <span>Free shipping ({coupon.code})</span>
+                  <span>Applied</span>
                 </div>
               )}
               <Separator />
@@ -153,16 +198,30 @@ export function CartPage() {
               </div>
 
               <div className="space-y-2">
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="Coupon code"
-                    value={couponInput}
-                    onChange={(e) => setCouponInput(e.target.value)}
-                  />
-                  <Button variant="outline" onClick={applyCoupon}>Apply</Button>
-                </div>
+                {coupon ? (
+                  <div className="flex items-center justify-between rounded-md border border-brand/40 bg-brand/5 px-3 py-2">
+                    <div className="text-sm">
+                      <span className="font-semibold text-brand">{coupon.code}</span>
+                      <span className="ml-2 text-xs text-text-muted">applied</span>
+                    </div>
+                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={removeCoupon}>
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Coupon code"
+                      value={couponInput}
+                      onChange={(e) => setCouponInput(e.target.value)}
+                      disabled={applyingCoupon}
+                    />
+                    <Button variant="outline" onClick={applyCoupon} disabled={applyingCoupon}>
+                      {applyingCoupon ? 'Applying…' : 'Apply'}
+                    </Button>
+                  </div>
+                )}
                 {couponError && <p className="text-xs text-red-500">{couponError}</p>}
-                <p className="text-xs text-text-muted">Try: SPORT10 for 10% off</p>
               </div>
 
               <Button asChild className="w-full" size="lg">

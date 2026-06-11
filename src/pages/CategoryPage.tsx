@@ -4,6 +4,8 @@ import { Trophy } from 'lucide-react'
 import { ProductCard } from '@/components/product/ProductCard'
 import { productService } from '@/services/productService'
 import { COUNTRY_ACHIEVEMENTS } from '@/constants/countryAchievements'
+import { AdSlot, AD_SLOTS } from '@/components/ads/AdSlot'
+import { useSEO } from '@/hooks/useSEO'
 
 const CATEGORY_MAP: Record<string, { title: string; filter: Parameters<typeof productService.getAll>[0] }> = {
   clubs: { title: 'Club Jerseys', filter: { category: 'Clubs' } },
@@ -46,18 +48,25 @@ export function CategoryPage() {
 
   const title = config?.title ?? slug?.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) ?? 'Category'
 
+  useSEO({
+    title: `${title} Jerseys`,
+    description: achievements
+      ? `Buy ${title} football jerseys online — ${achievements.nickname}, FIFA #${achievements.rank}. Home, away & retro editions. Fast delivery across India.`
+      : `Shop ${title.toLowerCase()} on SPORTSEXE — premium football jerseys with fast delivery across India.`,
+  })
+
   return (
     <div>
       {/* Country achievements banner */}
       {achievements && (
         <div className="border-b border-border bg-surface-elevated">
-          <div className="container mx-auto px-4 py-8 md:py-10">
+          <div className="container mx-auto px-4 py-8 md:py-12">
             {/* Header */}
             <div className="mb-6 flex items-center gap-4">
-              <span className="text-5xl">{achievements.flag}</span>
+              <span className="text-5xl md:text-6xl">{achievements.flag}</span>
               <div>
-                <h1 className="text-2xl font-black md:text-3xl">{title}</h1>
-                <p className="text-sm text-text-muted">
+                <h1 className="text-3xl font-bold tracking-tight md:text-4xl">{title}</h1>
+                <p className="mt-1 text-sm text-text-muted">
                   {achievements.nickname} · {achievements.confederation} · FIFA #{achievements.rank}
                 </p>
               </div>
@@ -97,14 +106,16 @@ export function CategoryPage() {
       )}
 
       {/* Products */}
-      <div className="container mx-auto px-4 py-8 md:py-10">
-        {!achievements && <h1 className="mb-2 text-3xl font-bold">{title}</h1>}
+      <div className="container mx-auto px-4 py-8 md:py-12">
+        {!achievements && <h1 className="mb-2 text-3xl font-bold tracking-tight md:text-4xl">{title}</h1>}
         <p className="mb-6 text-text-muted">{products.length} jerseys available</p>
 
+        <AdSlot slot={AD_SLOTS.category} className="mb-8 px-0" />
+
         {isLoading ? (
-          <p className="text-center text-text-muted">Loading...</p>
+          <p className="py-16 text-center text-text-muted">Loading…</p>
         ) : products.length === 0 ? (
-          <p className="text-center text-text-muted">No jerseys found in this category.</p>
+          <p className="py-16 text-center text-text-muted">No jerseys found in this category.</p>
         ) : (
           <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 md:gap-6">
             {products.map((product) => (

@@ -12,6 +12,7 @@ import { useCart } from '@/hooks/useCart'
 import { useWishlist } from '@/hooks/useWishlist'
 import { ReviewCard } from '@/components/review/ReviewCard'
 import { ReviewForm } from '@/components/review/ReviewForm'
+import { useSEO } from '@/hooks/useSEO'
 import type { ProductSize } from '@/types'
 import { cn } from '@/utils/cn'
 
@@ -35,6 +36,12 @@ export function ProductDetailPage() {
     queryKey: ['reviews', 'product', product?.id],
     queryFn: () => reviewService.getByProduct(product!.id),
     enabled: !!product?.id,
+  })
+
+  useSEO({
+    title: product ? `${product.title} — Buy Online India` : 'Product',
+    description: product?.shortDescription,
+    ogImage: product?.images[0],
   })
 
   if (isLoading) {

@@ -33,16 +33,16 @@ export function ProductCarousel({
   if (!products.length) return null
 
   return (
-    <section className={cn('py-12', className)}>
+    <section className={cn('py-16 md:py-20', className)}>
       <div className="container mx-auto px-4">
         {(title || subtitle) && (
           <div className="mb-8 flex items-end justify-between">
             <div>
               {title && (
-                <h2 className="text-2xl font-bold tracking-tight md:text-3xl">{title}</h2>
+                <h2 className="text-3xl font-black tracking-tight md:text-4xl">{title}</h2>
               )}
               {subtitle && (
-                <p className="mt-1 text-text-muted">{subtitle}</p>
+                <p className="mt-1 text-sm text-text-muted">{subtitle}</p>
               )}
             </div>
             <div className="hidden gap-2 sm:flex">

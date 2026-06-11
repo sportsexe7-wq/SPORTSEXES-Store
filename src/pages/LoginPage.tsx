@@ -70,7 +70,7 @@ export function LoginPage() {
   // After signup — waiting for email verification
   if (verificationSent) {
     return (
-      <div className="container mx-auto flex min-h-[65vh] items-center justify-center px-4 py-12">
+      <div className="container mx-auto flex min-h-[65vh] items-center justify-center px-4 py-12 md:py-20">
         <Card className="w-full max-w-md">
           <CardContent className="p-8 text-center">
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-brand/10">

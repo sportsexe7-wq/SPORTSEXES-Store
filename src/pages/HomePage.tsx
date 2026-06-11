@@ -9,6 +9,7 @@ import { ShopByCategorySection } from '@/components/home/ShopByCategorySection'
 import { FeaturedCollections } from '@/components/home/FeaturedCollections'
 import { ReviewsSection } from '@/components/home/ReviewsSection'
 import { ProductCarousel } from '@/components/product/ProductCarousel'
+import { AdSlot, AD_SLOTS } from '@/components/ads/AdSlot'
 import { Modal } from '@/components/ui/modal'
 import { productService } from '@/services/productService'
 import { useQuery } from '@tanstack/react-query'
@@ -16,6 +17,7 @@ import type { Product } from '@/types'
 import { formatCurrency } from '@/utils/format'
 import { Button } from '@/components/ui/button'
 import { useCart } from '@/hooks/useCart'
+import { useSEO } from '@/hooks/useSEO'
 
 export function HomePage() {
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null)
@@ -23,6 +25,11 @@ export function HomePage() {
   const { addItem } = useCart()
   const { user } = useAuth()
   const navigate = useNavigate()
+
+  useSEO({
+    title: 'SPORTSEXE — Premium Football Jerseys for Clubs & Countries | Buy Online India',
+    description: 'Shop premium football jerseys from SPORTSEXE — clubs, national teams, retro & World Cup editions. Free shipping across India over ₹2,999.',
+  })
 
   const { data: trending = [] } = useQuery({
     queryKey: ['products', 'trending'],
@@ -111,6 +118,9 @@ export function HomePage() {
         subtitle="What fans are buying this week"
         onQuickView={setQuickViewProduct}
       />
+
+      {/* Ad — between Trending and Category */}
+      <AdSlot slot={AD_SLOTS.homepage} />
 
       {/* 4. Shop by Category (6 accessory cards) */}
       <FeaturedCollections />

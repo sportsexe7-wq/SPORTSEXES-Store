@@ -1,5 +1,8 @@
 import { useSyncExternalStore } from 'react'
 import { cartStore } from '@/features/cart/cartStore'
+import type { Coupon } from '@/types'
+
+const NO_COUPON: Coupon | undefined = undefined
 
 export function useCart() {
   const items = useSyncExternalStore(
@@ -17,7 +20,7 @@ export function useCart() {
   const coupon = useSyncExternalStore(
     cartStore.subscribe,
     cartStore.getCoupon,
-    () => undefined,
+    () => NO_COUPON,
   )
 
   return {

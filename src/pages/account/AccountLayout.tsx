@@ -30,7 +30,7 @@ export function AccountLayout() {
           </button>
         </div>
       )}
-      <h1 className="mb-8 text-3xl font-bold">My Account</h1>
+      <h1 className="mb-8 text-3xl font-bold tracking-tight md:text-4xl">My Account</h1>
       <div className="grid gap-8 lg:grid-cols-4">
         <nav className="flex gap-2 overflow-x-auto lg:flex-col lg:gap-1">
           {NAV.map(({ to, label, icon: Icon, exact }) => {

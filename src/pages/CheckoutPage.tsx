@@ -13,6 +13,7 @@ import { useCart } from '@/hooks/useCart'
 import { cn } from '@/utils/cn'
 import { orderService } from '@/services/orderService'
 import { productService } from '@/services/productService'
+import { couponService } from '@/services/couponService'
 import { formatCurrency } from '@/utils/format'
 import type { Product } from '@/types'
 import { useAuth } from '@/contexts/AuthContext'
@@ -93,8 +94,13 @@ export function CheckoutPage() {
     try {
       const orderItems = await buildOrderItems()
       const subtotal = orderItems.reduce((s, i) => s + i.price * i.quantity, 0)
-      const discount = coupon === 'SPORT10' ? Math.round(subtotal * 0.1) : 0
-      const shipping = subtotal - discount >= 2000 ? 0 : 99
+      const validation = couponService.validate(coupon, subtotal)
+      const discount = validation.discount
+      const shipping = validation.freeShipping
+        ? 0
+        : subtotal - discount >= 2000
+          ? 0
+          : 99
       const total = subtotal - discount + shipping
       const now = new Date().toISOString()
 
@@ -109,7 +115,7 @@ export function CheckoutPage() {
           subtotal,
           shipping,
           discount,
-          ...(coupon ? { couponCode: coupon } : {}),
+          ...(coupon ? { couponCode: coupon.code } : {}),
           total,
           shippingAddress: shippingData,
           createdAt: now,
@@ -155,7 +161,7 @@ export function CheckoutPage() {
           subtotal,
           shipping,
           discount,
-          ...(coupon ? { couponCode: coupon } : {}),
+          ...(coupon ? { couponCode: coupon.code } : {}),
           total,
           shippingAddress: shippingData,
           createdAt: now,
@@ -177,7 +183,7 @@ export function CheckoutPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
-      <h1 className="mb-8 text-3xl font-bold">Checkout</h1>
+      <h1 className="mb-8 text-3xl font-bold tracking-tight md:text-4xl">Checkout</h1>
 
       {/* Steps */}
       <div className="mb-10 flex items-center justify-center gap-4">
@@ -297,8 +303,13 @@ export function CheckoutPage() {
             const price = p?.salePrice ?? p?.price ?? 0
             return s + price * item.quantity
           }, 0)
-          const discount = coupon === 'SPORT10' ? Math.round(subtotal * 0.1) : 0
-          const shipping = subtotal - discount >= 2000 ? 0 : 99
+          const validation = couponService.validate(coupon, subtotal)
+          const discount = validation.discount
+          const shipping = validation.freeShipping
+            ? 0
+            : subtotal - discount >= 2000
+              ? 0
+              : 99
           const total = subtotal - discount + shipping
 
           return (
@@ -349,10 +360,16 @@ export function CheckoutPage() {
                   <span>Subtotal</span>
                   <span>{formatCurrency(subtotal)}</span>
                 </div>
-                {discount > 0 && (
+                {discount > 0 && coupon && (
                   <div className="flex justify-between text-brand">
-                    <span>Coupon ({coupon})</span>
+                    <span>Coupon ({coupon.code})</span>
                     <span>− {formatCurrency(discount)}</span>
+                  </div>
+                )}
+                {validation.freeShipping && coupon && (
+                  <div className="flex justify-between text-brand">
+                    <span>Free shipping ({coupon.code})</span>
+                    <span>Applied</span>
                   </div>
                 )}
                 <div className="flex justify-between text-text-muted">

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowRight, Footprints, Shield, Flag, ShoppingBag, Hand, CircleDot } from 'lucide-react'
+import { ArrowRight, Footprints, Shield, Flag, Clock, Trophy, Star, ShoppingBag } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
 interface CategoryCard {
@@ -14,9 +14,9 @@ interface CategoryCard {
 
 const CATEGORY_CARDS: CategoryCard[] = [
   {
-    title: 'Long Socks',
+    title: 'Football Long Socks',
     subtitle: 'Match-grade comfort',
-    href: '/category/accessories?q=socks',
+    href: '/shop?q=long+socks',
     icon: Footprints,
     image: 'https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=800&q=80',
     accent: 'from-emerald-500/20 to-emerald-500/0',
@@ -24,41 +24,41 @@ const CATEGORY_CARDS: CategoryCard[] = [
   {
     title: 'Shin Guards',
     subtitle: 'Lightweight protection',
-    href: '/category/accessories?q=shin',
+    href: '/shop?q=shin+guards',
     icon: Shield,
     image: 'https://images.unsplash.com/photo-1606925797300-0b35e9d1794e?w=800&q=80',
     accent: 'from-sky-500/20 to-sky-500/0',
   },
   {
-    title: 'Fan Flags',
+    title: 'Country Flags',
     subtitle: 'Rep your nation',
-    href: '/category/accessories?q=flag',
+    href: '/category/flags',
     icon: Flag,
-    image: 'https://images.unsplash.com/photo-1551859402-c3e25f2efc54?w=800&q=80',
+    image: '/Flags.jpeg',
     accent: 'from-rose-500/20 to-rose-500/0',
   },
   {
-    title: 'Football Boots',
-    subtitle: 'Studs that grip',
-    href: '/category/accessories?q=boots',
-    icon: Footprints,
-    image: 'https://images.unsplash.com/photo-1511886929837-354d827aae26?w=800&q=80',
+    title: 'Retro Collection',
+    subtitle: 'Iconic kits from the past',
+    href: '/category/retro',
+    icon: Clock,
+    image: 'https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=800&q=80',
     accent: 'from-amber-500/20 to-amber-500/0',
   },
   {
-    title: 'Goalkeeper Gloves',
-    subtitle: 'Grip every save',
-    href: '/category/accessories?q=gloves',
-    icon: Hand,
-    image: 'https://images.unsplash.com/photo-1551958219-acbc608c6377?w=800&q=80',
+    title: 'Club Jersey',
+    subtitle: 'Your favourite clubs',
+    href: '/category/clubs',
+    icon: Trophy,
+    image: '/club-jerseys.jpeg',
     accent: 'from-purple-500/20 to-purple-500/0',
   },
   {
-    title: 'Match Footballs',
-    subtitle: 'Train like the pros',
-    href: '/category/accessories?q=ball',
-    icon: CircleDot,
-    image: 'https://images.unsplash.com/photo-1614632537190-23e4146777db?w=800&q=80',
+    title: 'Fan Edition Kits',
+    subtitle: 'Wear your player\'s number',
+    href: '/category/player-edition',
+    icon: Star,
+    image: 'https://images.unsplash.com/photo-1551958219-acbc608c6377?w=800&q=80',
     accent: 'from-cyan-500/20 to-cyan-500/0',
   },
 ]
@@ -78,11 +78,11 @@ export function FeaturedCollections() {
               Shop by <span className="text-brand">Category</span>
             </h2>
             <p className="mt-2 text-sm text-text-muted">
-              Everything a fan needs — from socks to flags
+              Jerseys, accessories &amp; fan gear — all in one place
             </p>
           </div>
           <Link
-            to="/category/accessories"
+            to="/shop"
             className="hidden shrink-0 text-sm font-semibold text-brand hover:underline md:block"
           >
             View all →
