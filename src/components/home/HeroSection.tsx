@@ -35,19 +35,19 @@ export function HeroSection() {
         <div className="flex">
           {HERO_SLIDES.map((slide) => (
             <div key={slide.id} className="relative min-w-0 flex-[0_0_100%]">
-              <div className="relative min-h-[32vh] md:min-h-[38vh]">
+              <div className="relative min-h-[28vh] md:min-h-[48vh]">
                 {slide.type === 'asmr' ? (
                   <video autoPlay muted loop playsInline poster={slide.poster}
                     className="absolute inset-0 h-full w-full object-cover">
                     <source src={slide.video} type="video/mp4" />
                   </video>
                 ) : (
-                  <img src={slide.image} alt="" className="absolute inset-0 h-full w-full object-cover object-top" />
+                  <img src={slide.image} alt="" className="absolute inset-0 h-full w-full object-cover object-top md:object-center" />
                 )}
-                <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/45 to-transparent" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-black/20" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
 
-                <div className="container relative mx-auto flex min-h-[38vh] items-center px-4 md:min-h-[44vh]">
+                <div className="container relative mx-auto flex min-h-[18vh] items-end px-4 md:min-h-[48vh] md:pb-6 lg:pb-5">
                   <AnimatePresence mode="wait">
                     <SlideContent key={slide.id} slide={slide} />
                   </AnimatePresence>
@@ -89,87 +89,71 @@ function SlideContent({ slide }: { slide: (typeof HERO_SLIDES)[number] }) {
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 8 }}
       transition={{ duration: 0.4 }}
-      className="max-w-xl"
+      className="max-w-sm"
     >
       {slide.type === 'asmr' && (
-        <div className="space-y-3">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-3 py-0.5 text-[11px] font-semibold uppercase tracking-widest text-white">
-            <Play className="h-3 w-3" /> Feel the Quality
+        <div className="space-y-2.5">
+          <span className="inline-flex items-center gap-1 rounded-full border border-white/25 bg-white/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-white">
+            <Play className="h-2.5 w-2.5" /> Feel the Quality
           </span>
-          <h2 className="text-3xl font-black leading-tight tracking-tight text-white md:text-4xl lg:text-5xl">
-            Premium Fabric.{' '}
-            <span className="text-brand">Every Stitch.</span>
+          <h2 className="text-2xl font-black leading-tight tracking-tight text-white md:text-3xl">
+            Premium Fabric.<br /><span className="text-brand">Every Stitch.</span>
           </h2>
-          <p className="text-sm text-white/75 md:text-base">
-            Pro-grade jerseys inspected before every shipment — delivered across India.
-          </p>
-          <Button asChild size="sm" className="mt-1"><Link to="/shop">Shop Now</Link></Button>
+          <Button asChild size="sm"><Link to="/shop">Shop Now</Link></Button>
         </div>
       )}
 
       {slide.type === 'portugal' && (
-        <div className="space-y-3">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-3 py-0.5 text-[11px] font-semibold uppercase tracking-widest text-white">
-            🇵🇹 Portugal Collection
+        <div className="space-y-2.5">
+          <span className="inline-flex items-center gap-1 rounded-full border border-white/25 bg-white/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-white">
+            🇵🇹 Portugal
           </span>
-          <h2 className="text-3xl font-black leading-tight tracking-tight text-white md:text-4xl lg:text-5xl">
-            Ronaldo's Nation.{' '}
-            <span className="text-brand">Your Jersey.</span>
+          <h2 className="text-2xl font-black leading-tight tracking-tight text-white md:text-3xl">
+            Ronaldo's Nation.<br /><span className="text-brand">Your Jersey.</span>
           </h2>
-          <p className="text-sm text-white/75 md:text-base">
-            Home, away &amp; retro — Portugal kits for every true fan.
-          </p>
-          <Button asChild size="sm" className="mt-1"><Link to="/category/portugal">Shop Portugal</Link></Button>
+          <Button asChild size="sm"><Link to="/category/portugal">Shop Portugal</Link></Button>
         </div>
       )}
 
       {slide.type === 'flags' && (
-        <div className="space-y-3">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-3 py-0.5 text-[11px] font-semibold uppercase tracking-widest text-white">
-            <Flag className="h-3 w-3" /> Fan Flags
+        <div className="space-y-2.5">
+          <span className="inline-flex items-center gap-1 rounded-full border border-white/25 bg-white/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-white">
+            <Flag className="h-2.5 w-2.5" /> Fan Flags
           </span>
-          <h2 className="text-3xl font-black leading-tight tracking-tight text-white md:text-4xl lg:text-5xl">
-            Rep Your Nation.{' '}
-            <span className="text-brand">Fly the Flag.</span>
+          <h2 className="text-2xl font-black leading-tight tracking-tight text-white md:text-3xl">
+            Rep Your Nation.<br /><span className="text-brand">Fly the Flag.</span>
           </h2>
-          <p className="text-sm text-white/75 md:text-base">
-            High-quality nation flags — perfect for match days &amp; fan zones.
-          </p>
-          <Button asChild size="sm" className="mt-1"><Link to="/category/flags">Shop Flags</Link></Button>
+          <Button asChild size="sm"><Link to="/category/flags">Shop Flags</Link></Button>
         </div>
       )}
 
       {slide.type === 'review' && slide.review && (
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           <div className="flex gap-0.5">
             {Array.from({ length: 5 }).map((_, i) => (
-              <Star key={i} className={cn('h-4 w-4', i < slide.review.rating ? 'fill-brand text-brand' : 'text-white/30')} />
+              <Star key={i} className={cn('h-3.5 w-3.5', i < slide.review.rating ? 'fill-brand text-brand' : 'text-white/30')} />
             ))}
           </div>
-          <blockquote className="text-lg font-semibold leading-snug text-white md:text-xl lg:text-2xl">
+          <blockquote className="text-base font-semibold leading-snug text-white md:text-lg">
             &ldquo;{slide.review.text}&rdquo;
           </blockquote>
-          <p className="text-sm text-white/60">
+          <p className="text-xs text-white/60">
             <span className="font-semibold text-white">{slide.review.name}</span>
-            {' · '}{slide.review.location}{' · '}{slide.review.product}
+            {' · '}{slide.review.location}
           </p>
-          <Button asChild size="sm" className="mt-1"><Link to="/shop">Shop Best Sellers</Link></Button>
+          <Button asChild size="sm"><Link to="/shop">Shop Now</Link></Button>
         </div>
       )}
 
       {slide.type === 'latest-launches' && (
-        <div className="space-y-3">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-3 py-0.5 text-[11px] font-semibold uppercase tracking-widest text-white">
-            <Sparkles className="h-3 w-3" /> New Arrivals
+        <div className="space-y-2.5">
+          <span className="inline-flex items-center gap-1 rounded-full border border-white/25 bg-white/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-white">
+            <Sparkles className="h-2.5 w-2.5" /> New Arrivals
           </span>
-          <h2 className="text-3xl font-black leading-tight tracking-tight text-white md:text-4xl lg:text-5xl">
-            Just Dropped.{' '}
-            <span className="text-brand">Don't Miss Out.</span>
+          <h2 className="text-2xl font-black leading-tight tracking-tight text-white md:text-3xl">
+            Just Dropped.<br /><span className="text-brand">Don't Miss Out.</span>
           </h2>
-          <p className="text-sm text-white/75 md:text-base">
-            Fresh kits added — clubs, countries &amp; retro editions. Limited stock.
-          </p>
-          <Button asChild size="sm" className="mt-1"><Link to="/shop">See What's New</Link></Button>
+          <Button asChild size="sm"><Link to="/shop">See What's New</Link></Button>
         </div>
       )}
     </motion.div>

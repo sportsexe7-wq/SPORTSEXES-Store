@@ -4,7 +4,9 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { MailCheck } from 'lucide-react'
+import { collection, query, where, getDocs } from 'firebase/firestore'
 import { useAuth } from '@/contexts/AuthContext'
+import { db } from '@/lib/firebase'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -12,7 +14,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/utils/cn'
 
 const signInSchema = z.object({
-  email: z.string().email('Valid email required'),
+  identifier: z.string().min(1, 'Email or mobile required'),
   password: z.string().min(6, 'Min 6 characters'),
 })
 
@@ -25,6 +27,16 @@ const signUpSchema = z.object({
 
 type SignInForm = z.infer<typeof signInSchema>
 type SignUpForm = z.infer<typeof signUpSchema>
+
+const PHONE_RE = /^\d{10}$/
+
+async function resolveEmail(identifier: string): Promise<string> {
+  if (!PHONE_RE.test(identifier)) return identifier
+  const phone = `+91${identifier}`
+  const snap = await getDocs(query(collection(db, 'customers'), where('phone', '==', phone)))
+  if (snap.empty) throw new Error('No account found for this mobile number')
+  return snap.docs[0].data().email as string
+}
 
 export function LoginPage() {
   const [tab, setTab] = useState<'signin' | 'signup'>('signin')
@@ -44,10 +56,12 @@ export function LoginPage() {
   const onSignIn = async (data: SignInForm) => {
     try {
       setError('')
-      await signIn(data.email, data.password)
+      const email = await resolveEmail(data.identifier.trim())
+      await signIn(email, data.password)
       navigate('/account')
-    } catch {
-      setError('Invalid email or password')
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : ''
+      setError(msg || 'Invalid credentials')
     }
   }
 
@@ -67,7 +81,6 @@ export function LoginPage() {
     try { await resendVerification() } finally { setResending(false) }
   }
 
-  // After signup — waiting for email verification
   if (verificationSent) {
     return (
       <div className="container mx-auto flex min-h-[65vh] items-center justify-center px-4 py-12 md:py-20">
@@ -81,7 +94,7 @@ export function LoginPage() {
               We sent a verification link to your email. Click it to activate your account, then sign in.
             </p>
             <p className="mt-3 rounded-lg bg-surface-muted px-3 py-2 text-xs text-text-muted">
-              📬 Can't find it? Check your <span className="font-semibold text-text">Spam / Junk</span> folder — verification emails sometimes land there.
+              📬 Can't find it? Check your <span className="font-semibold text-text">Spam / Junk</span> folder.
             </p>
             <div className="mt-6 flex flex-col gap-3">
               <Button onClick={() => { setVerificationSent(false); setTab('signin') }}>
@@ -127,10 +140,18 @@ export function LoginPage() {
           {tab === 'signin' ? (
             <form onSubmit={signInForm.handleSubmit(onSignIn)} className="mt-6 space-y-4">
               <div>
-                <Label htmlFor="si-email">Email</Label>
-                <Input id="si-email" type="email" className="mt-1" autoComplete="email" {...signInForm.register('email')} />
-                {signInForm.formState.errors.email && (
-                  <p className="mt-1 text-xs text-red-500">{signInForm.formState.errors.email.message}</p>
+                <Label htmlFor="si-identifier">Email or Mobile Number</Label>
+                <Input
+                  id="si-identifier"
+                  type="text"
+                  inputMode="email"
+                  className="mt-1"
+                  placeholder="you@example.com or 9876543210"
+                  autoComplete="username"
+                  {...signInForm.register('identifier')}
+                />
+                {signInForm.formState.errors.identifier && (
+                  <p className="mt-1 text-xs text-red-500">{signInForm.formState.errors.identifier.message}</p>
                 )}
               </div>
               <div>
