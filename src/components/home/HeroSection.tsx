@@ -35,6 +35,7 @@ export function HeroSection() {
         <div className="flex">
           {HERO_SLIDES.map((slide) => (
             <div key={slide.id} className="relative min-w-0 flex-[0_0_100%]">
+              <Link to={slide.href} className="block">
               <div className="relative min-h-[28vh] md:min-h-[48vh]">
                 {slide.type === 'asmr' ? (
                   <video autoPlay muted loop playsInline poster={slide.poster}
@@ -53,6 +54,7 @@ export function HeroSection() {
                   </AnimatePresence>
                 </div>
               </div>
+              </Link>
             </div>
           ))}
         </div>
@@ -97,9 +99,9 @@ function SlideContent({ slide }: { slide: (typeof HERO_SLIDES)[number] }) {
             <Play className="h-2.5 w-2.5" /> Feel the Quality
           </span>
           <h2 className="text-xl font-black leading-tight tracking-tight text-white">
-            Premium Fabric.<br /><span className="text-brand">Every Stitch.</span>
+            Premium Fabric.<br />Every Stitch.
           </h2>
-          <Button asChild size="sm"><Link to="/shop">Shop Now</Link></Button>
+          <Button asChild size="sm" className="bg-brand text-white hover:bg-brand/90"><Link to="/shop">Shop Now</Link></Button>
         </div>
       )}
 
@@ -108,10 +110,10 @@ function SlideContent({ slide }: { slide: (typeof HERO_SLIDES)[number] }) {
           <span className="inline-flex items-center gap-1 rounded-full border border-white/25 bg-white/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-white">
             🇵🇹 Portugal
           </span>
-          <h2 className="text-lg font-black leading-tight tracking-tight text-white ">
-            Ronaldo's Nation.<br /><span className="text-brand">Your Jersey.</span>
+          <h2 className="text-lg font-black leading-tight tracking-tight text-white">
+            Ronaldo's Nation.<br />Your Jersey.
           </h2>
-          <Button asChild size="sm"><Link to="/category/portugal">Shop Portugal</Link></Button>
+          <Button asChild size="sm" className="bg-brand text-white hover:bg-brand/90"><Link to="/category/portugal">Shop Portugal</Link></Button>
         </div>
       )}
 
@@ -121,9 +123,9 @@ function SlideContent({ slide }: { slide: (typeof HERO_SLIDES)[number] }) {
             <Flag className="h-2.5 w-2.5" /> Fan Flags
           </span>
           <h2 className="text-lg font-black leading-tight tracking-tight text-white">
-            Rep Your Nation.<br /><span className="text-brand">Fly the Flag.</span>
+            Rep Your Nation.<br />Fly the Flag.
           </h2>
-          <Button asChild size="sm"><Link to="/category/flags">Shop Flags</Link></Button>
+          <Button asChild size="sm" className="bg-brand text-white hover:bg-brand/90"><Link to="/category/flags">Shop Flags</Link></Button>
         </div>
       )}
 
@@ -131,7 +133,7 @@ function SlideContent({ slide }: { slide: (typeof HERO_SLIDES)[number] }) {
         <div className="space-y-2.5">
           <div className="flex gap-0.5">
             {Array.from({ length: 5 }).map((_, i) => (
-              <Star key={i} className={cn('h-3.5 w-3.5', i < slide.review.rating ? 'fill-brand text-brand' : 'text-white/30')} />
+              <Star key={i} className={cn('h-3.5 w-3.5', i < slide.review.rating ? 'fill-white text-white' : 'text-white/30')} />
             ))}
           </div>
           <blockquote className="text-base font-semibold leading-snug text-white md:text-lg">
@@ -141,7 +143,7 @@ function SlideContent({ slide }: { slide: (typeof HERO_SLIDES)[number] }) {
             <span className="font-semibold text-white">{slide.review.name}</span>
             {' · '}{slide.review.location}
           </p>
-          <Button asChild size="sm"><Link to="/shop">Shop Now</Link></Button>
+          <Button asChild size="sm" className="bg-brand text-white hover:bg-brand/90"><Link to="/shop">Shop Now</Link></Button>
         </div>
       )}
 
@@ -150,10 +152,10 @@ function SlideContent({ slide }: { slide: (typeof HERO_SLIDES)[number] }) {
           <span className="inline-flex items-center gap-1 rounded-full border border-white/25 bg-white/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-white">
             <Sparkles className="h-2.5 w-2.5" /> New Arrivals
           </span>
-          <h2 className="text-lg font-black leading-tight tracking-tight text-white ">
-            Just Dropped.<br /><span className="text-brand">Don't Miss Out.</span>
+          <h2 className="text-lg font-black leading-tight tracking-tight text-white">
+            Just Dropped.<br />Don't Miss Out.
           </h2>
-          <Button asChild size="sm"><Link to="/shop">See What's New</Link></Button>
+          <Button asChild size="sm" className="bg-brand text-white hover:bg-brand/90"><Link to="/shop">See What's New</Link></Button>
         </div>
       )}
     </motion.div>

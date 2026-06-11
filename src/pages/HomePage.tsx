@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
-import { Search, AlertTriangle, Crown, User } from 'lucide-react'
-import { useAuth } from '@/contexts/AuthContext'
+import { useNavigate } from 'react-router-dom'
+import { Search, AlertTriangle } from 'lucide-react'
+
 import { HeroSection } from '@/components/home/HeroSection'
 import { TrustBar } from '@/components/home/TrustBar'
 import { BestSellersSection } from '@/components/home/BestSellersSection'
@@ -23,7 +23,6 @@ export function HomePage() {
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const { addItem } = useCart()
-  const { user } = useAuth()
   const navigate = useNavigate()
 
   useSEO({
@@ -44,32 +43,7 @@ export function HomePage() {
   return (
     <>
       {/* Top header — site name + VIP + Login */}
-      <div className="border-b border-border bg-surface px-4 h-18 flex items-center">
-        <div className="container mx-auto flex items-center justify-between">
-          <Link to="/" className="inline-flex items-center">
-            <img
-              src="/Sportsexe.png"
-              alt="SPORTSEXE"
-              className="h-30 w-auto origin-left" 
-            />
-          </Link>
-          <div className="flex items-center gap-3">
-            <Link
-              to="/vip"
-              className="flex items-center gap-1.5 rounded-full border border-brand/40 bg-brand/10 px-3 py-1 text-xs font-semibold text-brand hover:bg-brand/20 transition-colors"
-            >
-              <Crown className="h-3 w-3" /> VIP
-            </Link>
-            <Link
-              to={user ? '/account' : '/login'}
-              className="flex items-center gap-1.5 rounded-full border border-border px-3 py-1 text-xs font-semibold text-text hover:border-brand/40 hover:text-brand transition-colors"
-            >
-              <User className="h-3 w-3" />
-              {user ? (user.displayName?.split(' ')[0] ?? 'Account') : 'Login'}
-            </Link>
-          </div>
-        </div>
-      </div>
+     
 
       {/* Fake-payment warning — continuous marquee */}
       <div className="overflow-hidden bg-orange-500 py-1 text-[10px] font-semibold text-white md:text-[11px]">

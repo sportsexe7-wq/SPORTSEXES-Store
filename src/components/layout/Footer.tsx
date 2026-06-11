@@ -26,6 +26,7 @@ export function Footer() {
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <img src="/Sportsexe.png" alt="SPORTSEXE" className="h-8 w-auto" />
+            <p className="mt-1 text-xs font-medium italic text-brand/80">Where Comfort Meets Efforts</p>
             <p className="mt-3 text-sm leading-relaxed text-text-muted">
               Premium imported football jerseys — clubs, nationals, retro &amp; World Cup editions delivered across India.
             </p>
