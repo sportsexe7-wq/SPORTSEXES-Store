@@ -47,7 +47,7 @@ export function HeroSection() {
                 <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-black/20" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
 
-                <div className="container relative mx-auto flex min-h-[18vh] items-end px-4 pt-10 md:min-h-[48vh] md:pb-6  ">
+                <div className="container relative mx-auto flex min-h-[18vh] items-end px-7 pt-9 pb-3 ">
                   <AnimatePresence mode="wait">
                     <SlideContent key={slide.id} slide={slide} />
                   </AnimatePresence>
@@ -108,7 +108,7 @@ function SlideContent({ slide }: { slide: (typeof HERO_SLIDES)[number] }) {
           <span className="inline-flex items-center gap-1 rounded-full border border-white/25 bg-white/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-white">
             🇵🇹 Portugal
           </span>
-          <h2 className="text-xl font-black leading-tight tracking-tight text-white ">
+          <h2 className="text-lg font-black leading-tight tracking-tight text-white ">
             Ronaldo's Nation.<br /><span className="text-brand">Your Jersey.</span>
           </h2>
           <Button asChild size="sm"><Link to="/category/portugal">Shop Portugal</Link></Button>
@@ -120,7 +120,7 @@ function SlideContent({ slide }: { slide: (typeof HERO_SLIDES)[number] }) {
           <span className="inline-flex items-center gap-1 rounded-full border border-white/25 bg-white/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-white">
             <Flag className="h-2.5 w-2.5" /> Fan Flags
           </span>
-          <h2 className="text-xl font-black leading-tight tracking-tight text-white">
+          <h2 className="text-lg font-black leading-tight tracking-tight text-white">
             Rep Your Nation.<br /><span className="text-brand">Fly the Flag.</span>
           </h2>
           <Button asChild size="sm"><Link to="/category/flags">Shop Flags</Link></Button>
@@ -150,7 +150,7 @@ function SlideContent({ slide }: { slide: (typeof HERO_SLIDES)[number] }) {
           <span className="inline-flex items-center gap-1 rounded-full border border-white/25 bg-white/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-white">
             <Sparkles className="h-2.5 w-2.5" /> New Arrivals
           </span>
-          <h2 className="text-xl font-black leading-tight tracking-tight text-white ">
+          <h2 className="text-lg font-black leading-tight tracking-tight text-white ">
             Just Dropped.<br /><span className="text-brand">Don't Miss Out.</span>
           </h2>
           <Button asChild size="sm"><Link to="/shop">See What's New</Link></Button>
