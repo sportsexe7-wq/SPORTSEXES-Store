@@ -29,7 +29,7 @@ export const HERO_SLIDES = [
   {
     id: 'latest-launches',
     type: 'latest-launches' as const,
-    image: '/Club Jerseys.jpeg',
+    image: '/club-jerseys.jpeg',
   },
 ]
 
