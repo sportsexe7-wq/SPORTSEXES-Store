@@ -208,13 +208,38 @@ export function ProductDetailPage() {
             )}
           </div>
 
-          <div className="flex items-baseline gap-3">
-            <span className="text-3xl font-bold">{formatCurrency(displayPrice)}</span>
-            {product.salePrice && (
-              <span className="text-lg text-text-muted line-through">
-                {formatCurrency(product.price)}
-              </span>
-            )}
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-baseline gap-3">
+              <span className="text-3xl font-bold">{formatCurrency(displayPrice)}</span>
+              {product.salePrice && (
+                <span className="text-lg text-text-muted line-through">
+                  {formatCurrency(product.price)}
+                </span>
+              )}
+            </div>
+            <div className="flex gap-2 pr-3">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => toggle(product.id)}
+                className={has(product.id) ? 'text-red-500' : ''}
+                aria-label="Add to wishlist"
+              >
+                <Heart className={cn('h-5 w-5', has(product.id) && 'fill-current')} />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={shareProduct}
+                aria-label="Share product"
+              >
+                {shareStatus === 'copied' ? (
+                  <Check className="h-5 w-5 text-brand" />
+                ) : (
+                  <Share2 className="h-5 w-5" />
+                )}
+              </Button>
+            </div>
           </div>
 
           <p className="text-text-muted">{product.shortDescription}</p>
@@ -293,29 +318,6 @@ export function ProductDetailPage() {
               <Button size="lg" variant="outline" className="flex-1" disabled={!inStock} onClick={handleBuyNow}>
                 Buy Now
               </Button>
-            </div>
-            <div className="flex gap-3">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => toggle(product.id)}
-              className={has(product.id) ? 'text-red-500' : ''}
-              aria-label="Add to wishlist"
-            >
-              <Heart className={cn('h-5 w-5', has(product.id) && 'fill-current')} />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={shareProduct}
-              aria-label="Share product"
-            >
-              {shareStatus === 'copied' ? (
-                <Check className="h-5 w-5 text-brand" />
-              ) : (
-                <Share2 className="h-5 w-5" />
-              )}
-            </Button>
             </div>
           </div>
           {shareStatus === 'copied' && (

@@ -6,8 +6,8 @@ export const MAIN_NAV = [
 ] as const
 
 export const SOCIAL_LINKS = [
-  { platform: 'Instagram', url: 'https://instagram.com/sportsexe', label: 'IG' },
-  { platform: 'YouTube', url: 'https://youtube.com/sportsexe', label: 'YT' },
+  { platform: 'Instagram', url: 'https://www.instagram.com/sport_exa?igsh=MXN4a3k4MmVueWo5aw==', label: 'IG' },
+  { platform: 'YouTube', url: 'https://youtube.com/@koustav1111?si=gDRHFs8wO9Q6_owC', label: 'YT' },
 ] as const
 
 export const CONTACT_INFO = {
