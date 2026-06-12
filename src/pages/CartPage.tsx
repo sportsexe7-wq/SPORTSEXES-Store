@@ -11,8 +11,7 @@ import { Separator } from '@/components/ui/separator'
 import { Card, CardContent } from '@/components/ui/card'
 import { formatCurrency } from '@/utils/format'
 
-const SHIPPING_THRESHOLD = 2999
-const SHIPPING_COST = 99
+import { calculateShipping } from '@/utils/checkout'
 
 export function CartPage() {
   const { items, updateQuantity, removeItem, setCoupon, coupon } = useCart()
@@ -45,11 +44,7 @@ export function CartPage() {
   const freeShipping = validation.freeShipping
   const shipping = subtotal === 0
     ? 0
-    : freeShipping
-      ? 0
-      : subtotal - discount >= SHIPPING_THRESHOLD
-        ? 0
-        : SHIPPING_COST
+    : calculateShipping(subtotal, discount, freeShipping)
   const total = subtotal - discount + shipping
 
   // If the saved coupon is now invalid (became inactive / expired / minOrder no longer met),

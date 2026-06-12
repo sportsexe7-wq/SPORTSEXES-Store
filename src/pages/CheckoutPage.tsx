@@ -15,6 +15,7 @@ import { orderService } from '@/services/orderService'
 import { productService } from '@/services/productService'
 import { couponService } from '@/services/couponService'
 import { formatCurrency } from '@/utils/format'
+import { calculateOrderTotal } from '@/utils/checkout'
 import type { Product } from '@/types'
 import { useAuth } from '@/contexts/AuthContext'
 import {
@@ -96,12 +97,12 @@ export function CheckoutPage() {
       const subtotal = orderItems.reduce((s, i) => s + i.price * i.quantity, 0)
       const validation = couponService.validate(coupon, subtotal)
       const discount = validation.discount
-      const shipping = validation.freeShipping
-        ? 0
-        : subtotal - discount >= 2000
-          ? 0
-          : 99
-      const total = subtotal - discount + shipping
+      const { shipping, codFee, total } = calculateOrderTotal(
+        subtotal,
+        discount,
+        validation.freeShipping,
+        paymentMethod,
+      )
       const now = new Date().toISOString()
 
       if (paymentMethod === 'online') {
@@ -115,6 +116,7 @@ export function CheckoutPage() {
           subtotal,
           shipping,
           discount,
+          ...(codFee > 0 ? { codFee } : {}),
           ...(coupon ? { couponCode: coupon.code } : {}),
           total,
           shippingAddress: shippingData,
@@ -161,6 +163,7 @@ export function CheckoutPage() {
           subtotal,
           shipping,
           discount,
+          ...(codFee > 0 ? { codFee } : {}),
           ...(coupon ? { couponCode: coupon.code } : {}),
           total,
           shippingAddress: shippingData,
@@ -280,7 +283,7 @@ export function CheckoutPage() {
                   </div>
                   <div>
                     <p className="font-semibold">Cash on Delivery</p>
-                    <p className="text-xs text-text-muted">Pay when your order arrives</p>
+                    <p className="text-xs text-text-muted">Pay when your order arrives · +₹49 COD fee</p>
                   </div>
                   <div className={cn('ml-auto h-5 w-5 rounded-full border-2 flex items-center justify-center', paymentMethod === 'cod' ? 'border-brand' : 'border-border')}>
                     {paymentMethod === 'cod' && <div className="h-2.5 w-2.5 rounded-full bg-brand" />}
@@ -305,12 +308,12 @@ export function CheckoutPage() {
           }, 0)
           const validation = couponService.validate(coupon, subtotal)
           const discount = validation.discount
-          const shipping = validation.freeShipping
-            ? 0
-            : subtotal - discount >= 2000
-              ? 0
-              : 99
-          const total = subtotal - discount + shipping
+          const { shipping, codFee, total } = calculateOrderTotal(
+            subtotal,
+            discount,
+            validation.freeShipping,
+            paymentMethod,
+          )
 
           return (
           <Card>
@@ -376,6 +379,12 @@ export function CheckoutPage() {
                   <span>Shipping</span>
                   <span>{shipping === 0 ? 'FREE' : formatCurrency(shipping)}</span>
                 </div>
+                {codFee > 0 && (
+                  <div className="flex justify-between text-text-muted">
+                    <span>COD fee</span>
+                    <span>{formatCurrency(codFee)}</span>
+                  </div>
+                )}
                 <Separator className="my-2" />
                 <div className="flex justify-between text-base font-bold">
                   <span>Total</span>

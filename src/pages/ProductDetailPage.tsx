@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { Star, Minus, Plus, Heart, Truck, Shield, RotateCcw, MessageSquare } from 'lucide-react'
+import { Star, Minus, Plus, Heart, Truck, Shield, RotateCcw, MessageSquare, Share2, Check } from 'lucide-react'
 import { productService } from '@/services/productService'
 import { reviewService } from '@/services/reviewService'
 import { Button } from '@/components/ui/button'
@@ -23,6 +23,7 @@ export function ProductDetailPage() {
   const [selectedSize, setSelectedSize] = useState<ProductSize>('M')
   const [quantity, setQuantity] = useState(1)
   const [activeImage, setActiveImage] = useState(0)
+  const [shareStatus, setShareStatus] = useState<'idle' | 'copied'>('idle')
   const { addItem } = useCart()
   const { has, toggle } = useWishlist()
 
@@ -81,6 +82,32 @@ export function ProductDetailPage() {
   const handleBuyNow = () => {
     addItem(product.id, selectedSize, quantity)
     navigate('/checkout')
+  }
+
+  const shareProduct = async () => {
+    const url = `${window.location.origin}/product/${product.slug}`
+    const shareData = {
+      title: product.title,
+      text: product.shortDescription,
+      url,
+    }
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData)
+        return
+      }
+    } catch (err) {
+      if ((err as Error).name === 'AbortError') return
+    }
+
+    try {
+      await navigator.clipboard.writeText(url)
+      setShareStatus('copied')
+      window.setTimeout(() => setShareStatus('idle'), 2000)
+    } catch {
+      window.prompt('Copy this product link:', url)
+    }
   }
 
   return (
@@ -258,22 +285,42 @@ export function ProductDetailPage() {
             {!inStock ? `Out of stock in size ${selectedSize}` : lowStock ? `Only ${selectedSizeStock} left — order soon!` : 'In stock'}
           </p>
 
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <Button size="lg" className="flex-1" disabled={!inStock} onClick={handleAddToCart}>
-              Add to Cart
-            </Button>
-            <Button size="lg" variant="outline" className="flex-1" disabled={!inStock} onClick={handleBuyNow}>
-              Buy Now
-            </Button>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="flex flex-1 flex-col gap-3 sm:flex-row">
+              <Button size="lg" className="flex-1" disabled={!inStock} onClick={handleAddToCart}>
+                Add to Cart
+              </Button>
+              <Button size="lg" variant="outline" className="flex-1" disabled={!inStock} onClick={handleBuyNow}>
+                Buy Now
+              </Button>
+            </div>
+            <div className="flex gap-3">
             <Button
               variant="outline"
               size="icon"
               onClick={() => toggle(product.id)}
               className={has(product.id) ? 'text-red-500' : ''}
+              aria-label="Add to wishlist"
             >
               <Heart className={cn('h-5 w-5', has(product.id) && 'fill-current')} />
             </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={shareProduct}
+              aria-label="Share product"
+            >
+              {shareStatus === 'copied' ? (
+                <Check className="h-5 w-5 text-brand" />
+              ) : (
+                <Share2 className="h-5 w-5" />
+              )}
+            </Button>
+            </div>
           </div>
+          {shareStatus === 'copied' && (
+            <p className="text-xs text-brand">Product link copied!</p>
+          )}
 
           <div className="grid gap-3 rounded-xl border border-border p-4 sm:grid-cols-3">
             <div className="flex items-center gap-2 text-sm">

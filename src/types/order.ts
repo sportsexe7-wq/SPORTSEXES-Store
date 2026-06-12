@@ -36,6 +36,7 @@ export interface Order {
   subtotal: number
   shipping: number
   discount: number
+  codFee?: number
   total: number
   couponCode?: string
   shippingAddress: ShippingAddress
