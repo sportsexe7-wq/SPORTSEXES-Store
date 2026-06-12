@@ -15,6 +15,7 @@ export const HERO_SLIDES = [
     id: 'portugal',
     type: 'portugal' as const,
     href: '/category/portugal',
+    video: '/Portugal.mp4', 
     image: '/portugal-jerseys.jpeg',
   },
   {
