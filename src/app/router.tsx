@@ -10,6 +10,7 @@ import { LoginPage } from '@/pages/LoginPage'
 import { AboutPage } from '@/pages/AboutPage'
 import { ContactPage } from '@/pages/ContactPage'
 import { VipPage } from '@/pages/VipPage'
+import { NotFoundPage } from '@/pages/NotFoundPage'
 import { AccountLayout } from '@/pages/account/AccountLayout'
 import { ProfilePage } from '@/pages/account/ProfilePage'
 import { OrdersPage } from '@/pages/account/OrdersPage'
@@ -39,6 +40,7 @@ export const router = createBrowserRouter([
           { path: 'wishlist', element: <WishlistPage /> },
         ],
       },
+      { path: '*', element: <NotFoundPage /> },
     ],
   },
 ])

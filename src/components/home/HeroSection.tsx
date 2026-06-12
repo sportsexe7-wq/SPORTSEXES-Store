@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import useEmblaCarousel from 'embla-carousel-react'
 import Autoplay from 'embla-carousel-autoplay'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronLeft, ChevronRight, Star, Play, Flag, Sparkles } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Play, Flag, Sparkles } from 'lucide-react'
 import { HERO_SLIDES } from '@/constants/heroSlides'
 // import { Button } from '@/components/ui/button'
 import { cn } from '@/utils/cn'
@@ -127,20 +127,14 @@ function SlideContent({ slide }: { slide: (typeof HERO_SLIDES)[number] }) {
           </div>
       )}
 
-      {slide.type === 'review' && slide.review && (
-        <div className="space-y-2.5 pt-30">
-          <div className="flex gap-0.5">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Star key={i} className={cn('h-3.5 w-3.5', i < slide.review.rating ? 'fill-white text-white' : 'text-white/30')} />
-            ))}
-          </div>
-          <blockquote className="text-base font-semibold leading-snug text-white md:text-lg">
-            &ldquo;{slide.review.text}&rdquo;
-          </blockquote>
-          <p className="text-xs text-white/60">
-            <span className="font-semibold text-white">{slide.review.name}</span>
-            {' · '}{slide.review.location}
-          </p>
+      {slide.type === 'argentina' && (
+        <div className="space-y-2.5 pt-40">
+          <span className="inline-flex items-center gap-1 rounded-full border border-white/25 bg-white/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-white">
+            🇦🇷 Argentina
+          </span>
+          <h2 className="text-lg font-black leading-tight tracking-tight text-white">
+            Messi&apos;s Nation.<br />Your Jersey.
+          </h2>
          </div>
       )}
 

@@ -1,5 +1,3 @@
-import { REVIEWS } from './reviews'
-
 const PRODUCT_VIDEO =
   '/Fabric.mp4'
 
@@ -25,17 +23,17 @@ export const HERO_SLIDES = [
     image: '/Flags.jpeg',
   },
   {
-    id: 'review',
-    type: 'review' as const,
-    href: '/shop',
+    id: 'argentina',
+    type: 'argentina' as const,
+    href: '/category/argentina',
     video: '/Argentina.mp4',
-    image: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=1600&q=80',
-    review: REVIEWS[0],
+    image: '/argentina-jerseys.jpeg',
   },
   {
     id: 'latest-launches',
     type: 'latest-launches' as const,
     href: '/shop',
+    video: 'ClubJersey.mp4',
     image: '/club-jerseys.jpeg',
   },
 ]
