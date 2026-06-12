@@ -14,6 +14,38 @@ interface CategoryCard {
 
 const CATEGORY_CARDS: CategoryCard[] = [
   {
+    title: 'Retro Collection',
+    subtitle: 'Iconic kits from the past',
+    href: '/category/retro',
+    icon: Clock,
+    image: '/retro-jersey.jpeg',
+    accent: 'from-amber-500/20 to-amber-500/0',
+  },
+  {
+    title: 'Jersey with Shorts',
+    subtitle: 'Wear your player\'s number',
+    href: '/category/player-edition',
+    icon: Star,
+    image: '/jersey-with-shorts.jpeg',
+    accent: 'from-cyan-500/20 to-cyan-500/0',
+  },
+  {
+    title: 'Club Jersey',
+    subtitle: 'Your favourite clubs',
+    href: '/category/clubs',
+    icon: Trophy,
+    image: '/club-jersey.jpeg',
+    accent: 'from-purple-500/20 to-purple-500/0',
+  },
+  {
+    title: 'Country Flags',
+    subtitle: 'Rep your nation',
+    href: '/category/flags',
+    icon: Flag,
+    image: '/Flags.jpeg',
+    accent: 'from-rose-500/20 to-rose-500/0',
+  },
+  {
     title: 'Football Long Socks',
     subtitle: 'Match-grade comfort',
     href: '/shop?q=long+socks',
@@ -29,38 +61,9 @@ const CATEGORY_CARDS: CategoryCard[] = [
     image: '/shin-guards.jpeg',
     accent: 'from-sky-500/20 to-sky-500/0',
   },
-  {
-    title: 'Country Flags',
-    subtitle: 'Rep your nation',
-    href: '/category/flags',
-    icon: Flag,
-    image: '/Flags.jpeg',
-    accent: 'from-rose-500/20 to-rose-500/0',
-  },
-  {
-    title: 'Retro Collection',
-    subtitle: 'Iconic kits from the past',
-    href: '/category/retro',
-    icon: Clock,
-    image: '/retro-jersey.jpeg',
-    accent: 'from-amber-500/20 to-amber-500/0',
-  },
-  {
-    title: 'Club Jersey',
-    subtitle: 'Your favourite clubs',
-    href: '/category/clubs',
-    icon: Trophy,
-    image: '/club-jersey.jpeg',
-    accent: 'from-purple-500/20 to-purple-500/0',
-  },
-  {
-    title: 'Fan Edition Kits',
-    subtitle: 'Wear your player\'s number',
-    href: '/category/player-edition',
-    icon: Star,
-    image: '/jersey-with-shorts.jpeg',
-    accent: 'from-cyan-500/20 to-cyan-500/0',
-  },
+  
+  
+  
 ]
 
 export function FeaturedCollections() {
