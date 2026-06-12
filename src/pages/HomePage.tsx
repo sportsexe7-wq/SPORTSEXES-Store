@@ -1,6 +1,4 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Search, AlertTriangle } from 'lucide-react'
 
 import { HeroSection } from '@/components/home/HeroSection'
 import { TrustBar } from '@/components/home/TrustBar'
@@ -21,9 +19,7 @@ import { useSEO } from '@/hooks/useSEO'
 
 export function HomePage() {
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null)
-  const [searchQuery, setSearchQuery] = useState('')
   const { addItem } = useCart()
-  const navigate = useNavigate()
 
   useSEO({
     title: 'SPORTSEXE — Premium Football Jerseys for Clubs & Countries | Buy Online India',
@@ -35,47 +31,8 @@ export function HomePage() {
     queryFn: () => productService.getTrending(),
   })
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (searchQuery.trim()) navigate(`/shop?q=${encodeURIComponent(searchQuery.trim())}`)
-  }
-
   return (
     <>
-      {/* Top header — site name + VIP + Login */}
-     
-
-      {/* Fake-payment warning — continuous marquee */}
-      <div className="overflow-hidden bg-orange-500 py-1 text-[10px] font-semibold text-white md:text-[11px]">
-        <div className="animate-marquee flex w-max gap-0">
-          {Array.from({ length: 2 }).map((_, i) => (
-            <span key={i} className="flex shrink-0 items-center">
-              {Array.from({ length: 6 }).map((_, j) => (
-                <span key={j} className="flex items-center px-8">
-                  <AlertTriangle className="mr-1.5 inline h-2.5 w-2.5 shrink-0" />
-                  BEWARE of fake payment calls — we NEVER ask for OTPs, card details or bank info. Contact us only at support@sportsexe.com
-                </span>
-              ))}
-            </span>
-          ))}
-        </div>
-      </div>
-
-      {/* Search bar */}
-      <div className="border-b border-border bg-surface px-4 py-3">
-        <div className="container mx-auto">
-          <form onSubmit={handleSearch} className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
-            <input
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search jerseys, teams, countries…"
-              className="h-10 w-full rounded-xl border border-border bg-surface-elevated pl-9 pr-4 text-sm text-text placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-brand"
-            />
-          </form>
-        </div>
-      </div>
-
       <HeroSection />
       <TrustBar />
 

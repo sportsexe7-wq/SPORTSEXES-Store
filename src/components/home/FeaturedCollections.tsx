@@ -18,7 +18,7 @@ const CATEGORY_CARDS: CategoryCard[] = [
     subtitle: 'Match-grade comfort',
     href: '/shop?q=long+socks',
     icon: Footprints,
-    image: 'https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=800&q=80',
+    image: '/long-socks.jpeg',
     accent: 'from-emerald-500/20 to-emerald-500/0',
   },
   {
@@ -26,7 +26,7 @@ const CATEGORY_CARDS: CategoryCard[] = [
     subtitle: 'Lightweight protection',
     href: '/shop?q=shin+guards',
     icon: Shield,
-    image: 'https://images.unsplash.com/photo-1606925797300-0b35e9d1794e?w=800&q=80',
+    image: '/shin-guards.jpeg',
     accent: 'from-sky-500/20 to-sky-500/0',
   },
   {
@@ -42,7 +42,7 @@ const CATEGORY_CARDS: CategoryCard[] = [
     subtitle: 'Iconic kits from the past',
     href: '/category/retro',
     icon: Clock,
-    image: 'https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=800&q=80',
+    image: '/retro-jersey.jpeg',
     accent: 'from-amber-500/20 to-amber-500/0',
   },
   {
@@ -50,7 +50,7 @@ const CATEGORY_CARDS: CategoryCard[] = [
     subtitle: 'Your favourite clubs',
     href: '/category/clubs',
     icon: Trophy,
-    image: '/club-jerseys.jpeg',
+    image: '/club-jersey.jpeg',
     accent: 'from-purple-500/20 to-purple-500/0',
   },
   {
@@ -58,7 +58,7 @@ const CATEGORY_CARDS: CategoryCard[] = [
     subtitle: 'Wear your player\'s number',
     href: '/category/player-edition',
     icon: Star,
-    image: 'https://images.unsplash.com/photo-1551958219-acbc608c6377?w=800&q=80',
+    image: '/jersey-with-shorts.jpeg',
     accent: 'from-cyan-500/20 to-cyan-500/0',
   },
 ]
