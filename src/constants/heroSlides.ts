@@ -28,6 +28,7 @@ export const HERO_SLIDES = [
     id: 'review',
     type: 'review' as const,
     href: '/shop',
+    video: '/Argentina.mp4',
     image: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=1600&q=80',
     review: REVIEWS[0],
   },
