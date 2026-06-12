@@ -1,7 +1,7 @@
 import { REVIEWS } from './reviews'
 
 const PRODUCT_VIDEO =
-  'https://assets.mixkit.co/videos/preview/mixkit-soccer-player-dribbling-the-ball-2098-large.mp4'
+  '/Fabric.mp4'
 
 export const HERO_SLIDES = [
   {

@@ -11,7 +11,7 @@ import { cn } from '@/utils/cn'
 export function HeroSection() {
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [
-    Autoplay({ delay: 6000, stopOnInteraction: false }),
+    Autoplay({ delay: 10000, stopOnInteraction: false }),
   ])
 
   const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi])
@@ -39,7 +39,7 @@ export function HeroSection() {
               <div className="relative min-h-[28vh] md:min-h-[48vh]">
                 {slide.type === 'asmr' ? (
                   <video autoPlay muted loop playsInline poster={slide.poster}
-                    className="absolute inset-0 h-full w-full object-cover">
+                    className="absolute inset-0 h-full w-full object-cover ">
                     <source src={slide.video} type="video/mp4" />
                   </video>
                 ) : (
