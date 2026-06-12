@@ -111,7 +111,7 @@ export function FeaturedCollections() {
                   <img
                     src={card.image}
                     alt={card.title}
-                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    className="absolute inset-0 h-full w-full object-cover scale-110 transition-transform duration-700 group-hover:scale-115"
                   />
 
                   {/* Colored accent gradient */}
