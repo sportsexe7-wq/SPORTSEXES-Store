@@ -11,8 +11,7 @@ export const SOCIAL_LINKS = [
 ] as const
 
 export const CONTACT_INFO = {
-  email: 'support@sportsexe.com',
-  phone: '+91 98765 43210',
+  email: 'sportsexe7@gmail.com',
   address: 'Mumbai, Maharashtra, India',
   hours: 'Mon–Sat, 10am – 8pm IST',
 } as const

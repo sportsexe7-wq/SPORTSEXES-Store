@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Mail, MapPin, Phone, Clock } from 'lucide-react'
+import { Mail, MapPin, Clock } from 'lucide-react'
 import { CONTACT_INFO, SOCIAL_LINKS } from '@/constants/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -38,7 +38,6 @@ export function ContactPage() {
           <div className="space-y-4 lg:col-span-2">
             {[
               { icon: Mail, label: 'Email', value: CONTACT_INFO.email, href: `mailto:${CONTACT_INFO.email}` },
-              { icon: Phone, label: 'Phone', value: CONTACT_INFO.phone, href: `tel:${CONTACT_INFO.phone.replace(/\s/g, '')}` },
               { icon: MapPin, label: 'Address', value: CONTACT_INFO.address },
               { icon: Clock, label: 'Hours', value: CONTACT_INFO.hours },
             ].map(({ icon: Icon, label, value, href }) => (

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Mail, MapPin, Phone } from 'lucide-react'
+import { Mail, MapPin } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
@@ -75,13 +75,7 @@ export function Footer() {
                   {CONTACT_INFO.email}
                 </a>
               </li>
-              <li className="flex items-start gap-2">
-                <Phone className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
-                <a href={`tel:${CONTACT_INFO.phone.replace(/\s/g, '')}`} className="hover:text-text">
-                  {CONTACT_INFO.phone}
-                </a>
-              </li>
-              <li className="flex items-start gap-2">
+<li className="flex items-start gap-2">
                 <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
                 <span>{CONTACT_INFO.address}</span>
               </li>
