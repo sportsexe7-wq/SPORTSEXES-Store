@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import { User, Package, Heart, MailWarning } from 'lucide-react'
 import { cn } from '@/utils/cn'
@@ -11,7 +12,11 @@ const NAV = [
 
 export function AccountLayout() {
   const location = useLocation()
-  const { user, resendVerification } = useAuth()
+  const { user, resendVerification, refreshUser } = useAuth()
+
+  useEffect(() => {
+    refreshUser()
+  }, [])
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">

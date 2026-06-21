@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -45,10 +45,12 @@ export function LoginPage() {
   const [resending, setResending] = useState(false)
   const { user, signIn, signUp, resendVerification } = useAuth()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const redirectTo = searchParams.get('redirect') ?? '/account'
 
   useEffect(() => {
-    if (user?.emailVerified) navigate('/account', { replace: true })
-  }, [user, navigate])
+    if (user?.emailVerified) navigate(redirectTo, { replace: true })
+  }, [user, navigate, redirectTo])
 
   const signInForm = useForm<SignInForm>({ resolver: zodResolver(signInSchema) })
   const signUpForm = useForm<SignUpForm>({ resolver: zodResolver(signUpSchema) })
@@ -58,7 +60,7 @@ export function LoginPage() {
       setError('')
       const email = await resolveEmail(data.identifier.trim())
       await signIn(email, data.password)
-      navigate('/account')
+      navigate(redirectTo)
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : ''
       setError(msg || 'Invalid credentials')
@@ -118,8 +120,15 @@ export function LoginPage() {
             {tab === 'signin' ? 'Welcome Back' : 'Create Account'}
           </h1>
           <p className="mt-1 text-sm text-text-muted">
-            {tab === 'signin' ? 'Sign in to your SPORTSEXE account' : 'Join SPORTSEXE today'}
+            {redirectTo === '/checkout'
+              ? 'Sign in or create a free account to complete your purchase.'
+              : tab === 'signin' ? 'Sign in to your SPORTSEXE account' : 'Join SPORTSEXE today'}
           </p>
+          {redirectTo === '/checkout' && (
+            <div className="mt-3 rounded-lg border border-brand/30 bg-brand/5 px-3 py-2 text-xs text-text-muted">
+              You'll be taken straight back to your cart after signing in.
+            </div>
+          )}
 
           <div className="mt-6 flex rounded-xl border border-border bg-surface-elevated p-1">
             {(['signin', 'signup'] as const).map((t) => (

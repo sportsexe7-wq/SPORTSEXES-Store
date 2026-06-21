@@ -18,6 +18,7 @@ interface AuthContextValue {
   signUp: (email: string, password: string, name: string, phone: string) => Promise<void>
   signOut: () => Promise<void>
   resendVerification: () => Promise<void>
+  refreshUser: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -61,8 +62,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (auth.currentUser) await sendEmailVerification(auth.currentUser)
   }
 
+  const refreshUser = async () => {
+    if (auth.currentUser) {
+      await auth.currentUser.reload()
+      setUser(Object.assign(Object.create(Object.getPrototypeOf(auth.currentUser)), auth.currentUser))
+    }
+  }
+
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut, resendVerification }}>
+    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut, resendVerification, refreshUser }}>
       {children}
     </AuthContext.Provider>
   )

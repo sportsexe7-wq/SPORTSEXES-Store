@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { Minus, Plus, Trash2, ShoppingBag, X } from 'lucide-react'
+import { Minus, Plus, Trash2, ShoppingBag, X, LogIn } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
 import { productService } from '@/services/productService'
 import { couponService } from '@/services/couponService'
@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
 import { Card, CardContent } from '@/components/ui/card'
 import { formatCurrency } from '@/utils/format'
+import { useAuth } from '@/contexts/AuthContext'
 
 import { calculateShipping } from '@/utils/checkout'
 
@@ -18,6 +19,8 @@ export function CartPage() {
   const [couponInput, setCouponInput] = useState(coupon?.code ?? '')
   const [couponError, setCouponError] = useState('')
   const [applyingCoupon, setApplyingCoupon] = useState(false)
+  const { user } = useAuth()
+  const navigate = useNavigate()
 
   const productIds = items.map((i) => i.productId)
 
@@ -219,9 +222,28 @@ export function CartPage() {
                 {couponError && <p className="text-xs text-red-500">{couponError}</p>}
               </div>
 
-              <Button asChild className="w-full" size="lg">
-                <Link to="/checkout">Proceed to Checkout</Link>
-              </Button>
+              {!user ? (
+                <div className="space-y-3">
+                  <div className="rounded-lg border border-orange-500/30 bg-orange-500/10 px-4 py-3 text-sm text-orange-400">
+                    <p className="font-semibold">Sign in required to checkout</p>
+                    <p className="mt-0.5 text-xs text-orange-300">
+                      Create a free account or sign in to place your order and track it anytime.
+                    </p>
+                  </div>
+                  <Button
+                    className="w-full"
+                    size="lg"
+                    onClick={() => navigate('/login?redirect=/checkout')}
+                  >
+                    <LogIn className="mr-2 h-4 w-4" />
+                    Sign In to Checkout
+                  </Button>
+                </div>
+              ) : (
+                <Button asChild className="w-full" size="lg">
+                  <Link to="/checkout">Proceed to Checkout</Link>
+                </Button>
+              )}
               <Button asChild variant="outline" className="w-full">
                 <Link to="/shop">Continue Shopping</Link>
               </Button>

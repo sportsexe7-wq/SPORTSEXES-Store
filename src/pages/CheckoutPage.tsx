@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Check, CreditCard, Banknote } from 'lucide-react'
+import { Check, CreditCard, Banknote, MailWarning } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -47,8 +47,14 @@ export function CheckoutPage() {
   const [error, setError] = useState('')
   const [cartProducts, setCartProducts] = useState<Record<string, Product>>({})
   const { items, clear, coupon } = useCart()
-  const { user } = useAuth()
+  const { user, loading: authLoading, resendVerification } = useAuth()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate('/login?redirect=/checkout', { replace: true })
+    }
+  }, [authLoading, user, navigate])
 
   useEffect(() => {
     Promise.all(items.map((i) => productService.getById(i.productId))).then((results) => {
@@ -182,6 +188,31 @@ export function CheckoutPage() {
     } finally {
       setPlacing(false)
     }
+  }
+
+  if (user && !user.emailVerified) {
+    return (
+      <div className="container mx-auto flex min-h-[55vh] items-center justify-center px-4 py-12">
+        <div className="w-full max-w-md rounded-xl border border-orange-500/30 bg-orange-500/10 p-8 text-center">
+          <MailWarning className="mx-auto h-12 w-12 text-orange-400" />
+          <h2 className="mt-4 text-xl font-bold">Verify your email to continue</h2>
+          <p className="mt-2 text-sm text-text-muted">
+            We sent a verification link to <span className="font-semibold text-text">{user.email}</span>.
+            Click that link and come back here to place your order.
+          </p>
+          <p className="mt-3 rounded-lg bg-surface-muted px-3 py-2 text-xs text-text-muted">
+            Can't find it? Check your <span className="font-semibold text-text">Spam / Junk</span> folder.
+          </p>
+          <Button
+            className="mt-6 w-full"
+            variant="outline"
+            onClick={async () => { await resendVerification() }}
+          >
+            Resend verification email
+          </Button>
+        </div>
+      </div>
+    )
   }
 
   return (
